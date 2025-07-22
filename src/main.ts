@@ -1,5 +1,16 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import ToastPlugin from 'vue-toast-notification';
+import App from './App.vue';
+import router from './router';
+import { createPinia } from 'pinia';
+import './style.css';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+app.use(createPinia());
+app.use(router);
+
+app.use(ToastPlugin);
+app.mount('#app');
+
