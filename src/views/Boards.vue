@@ -33,11 +33,12 @@
     </div>
 
     <div v-else>
-      <div class="flex w-[78vw] justify-end pr-12">
+      <div class="flex w-[78vw] justify-end pr-12" v-if="userIsAdmin">
         <button id="auth-btn"
+            @click="showCreateModal = true"
             class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
             + Create board</button>
-        </div>
+      </div>
       <div v-if="boards.length">
         <div class="flex flex-wrap gap-4">
           <BoardCard
@@ -57,6 +58,7 @@
     </div>
   </div>
 
+  <!-- Modais -->
   <BoardEditModal
     v-if="selectedBoardToEdit"
     :visible="showEditModal"
@@ -72,6 +74,12 @@
     @close="closeDeleteModal"
     @deleted="handleBoardDeleted"
   />
+
+  <BoardCreateModal
+    :visible="showCreateModal"
+    @close="showCreateModal = false"
+    @created="handleBoardCreated"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -81,7 +89,8 @@ import BoardCard from '../components/BoardCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
 import BoardEditModal from '../components/BoardEditModal.vue'
-import BoardDeleteModal from '../components/BoardDeleteModal.vue' 
+import BoardDeleteModal from '../components/BoardDeleteModal.vue'
+import BoardCreateModal from '../components/BoardCreateModal.vue'
 
 const boards = ref([])
 const search = ref('')
@@ -96,6 +105,8 @@ const showEditModal = ref(false)
 
 const selectedBoardToDelete = ref(null)
 const showDeleteModal = ref(false)
+
+const showCreateModal = ref(false)
 
 const openEditModal = (board: any) => {
   selectedBoardToEdit.value = board
@@ -139,9 +150,16 @@ const handleBoardDeleted = (deletedBoardId: number) => {
   closeDeleteModal()
 }
 
+const handleBoardCreated = (newBoard: any) => {
+  boards.value.unshift(newBoard)
+  if (isSearching.value && search.value) {
+    searchResults.value.unshift(newBoard)
+  }
+  showCreateModal.value = false
+}
+
 onMounted(async () => {
   isLoading.value = true
-
   try {
     const boardsRes = await api.get('/api/boards')
     boards.value = boardsRes.data.data
