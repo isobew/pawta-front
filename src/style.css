@@ -23,7 +23,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: #712b2b;
+  color: #525392;
 }
 
 body {
@@ -85,7 +85,7 @@ button {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
+  /* :root {
     color: #bb5678;
     background-color: #ffffff;
   }
@@ -94,7 +94,7 @@ button {
   }
   button {
     background-color: #fe99bb;
-  }
+  } */
 }
 
 .form-container {
