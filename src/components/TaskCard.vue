@@ -58,6 +58,8 @@ defineProps<{
     status: 'to-do' | 'in-progress' | 'done'
     board_name?: string
     due_in?: number
+    board_id: number
+    assignee_id: number
   }
   showActions?: boolean
   isAdmin?: boolean

@@ -14,20 +14,27 @@
         type="text"
         placeholder="Task title"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
+        :class="{ 'border-red-500': titleError }"
       />
+      <p v-if="titleError" class="text-red-500 text-sm mb-4">Title is required</p>
 
       <textarea
         v-model="description"
         placeholder="Description"
         rows="4"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
+        :class="{ 'border-red-500': descriptionError }"
       ></textarea>
+      <p v-if="descriptionError" class="text-red-500 text-sm mb-4">Description is required</p>
 
       <input
         v-model="dueDate"
         type="date"
+        :min="today"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
+        :class="{ 'border-red-500': dueDateError }"
       />
+      <p v-if="dueDateError" class="text-red-500 text-sm mb-4">Due date is required and need to be valid</p>
 
       <select
         v-model="status"
@@ -41,28 +48,32 @@
       <select
         v-model="boardId"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
+        :class="{ 'border-red-500': boardError }"
       >
         <option disabled value="">Select Board</option>
         <option v-for="board in boards" :key="board.id" :value="board.id">
           {{ board.title }}
         </option>
       </select>
+      <p v-if="boardError" class="text-red-500 text-sm mb-4">Board is required</p>
 
       <select
         v-model="assigneeId"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-6"
+        :class="{ 'border-red-500': assigneeError }"
       >
         <option disabled value="">Assign to</option>
         <option v-for="user in users" :key="user.id" :value="user.id">
           {{ user.name }}
         </option>
       </select>
+      <p v-if="assigneeError" class="text-red-500 text-sm mb-6">Assignee is required</p>
 
       <div class="flex gap-4">
         <button
           class="flex-1 bg-[#525392] text-white py-2 rounded hover:opacity-90"
           @click="create"
-          :disabled="isSaving || !title.trim()"
+          :disabled="isSaving"
         >
           {{ isSaving ? 'Creating...' : 'Create' }}
         </button>
@@ -80,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, onMounted } from 'vue'
+import { ref, defineProps, defineEmits, onMounted, computed } from 'vue'
 import api from '../services/api'
 
 const props = defineProps<{ visible: boolean; creatorId: number }>()
@@ -97,16 +108,42 @@ const isSaving = ref(false)
 const boards = ref<{ id: number; title: string }[]>([])
 const users = ref<{ id: number; name: string }[]>([])
 
+const today = new Date().toISOString().split('T')[0]
+
+// Validation errors
+const titleError = ref(false)
+const descriptionError = ref(false)
+const dueDateError = ref(false)
+const boardError = ref(false)
+const assigneeError = ref(false)
+
 const close = () => {
   if (!isSaving.value) emit('close')
 }
 
+const isValidForm = computed(() => {
+  return (
+    title.value.trim() !== '' &&
+    description.value.trim() !== '' &&
+    dueDate.value !== '' &&
+    new Date(dueDate.value) > new Date(today) &&
+    boardId.value !== '' &&
+    assigneeId.value !== ''
+  )
+})
+
 const create = async () => {
-  if (!title.value.trim()) return
+  titleError.value = title.value.trim() === ''
+  descriptionError.value = description.value.trim() === ''
+  dueDateError.value = dueDate.value === '' || new Date(dueDate.value) < new Date(today)
+  boardError.value = boardId.value === ''
+  assigneeError.value = assigneeId.value === ''
+
+  if (!isValidForm.value) return
 
   isSaving.value = true
   try {
-    const response = await api.post('/api/create-task', {
+    const item_task = await api.post('/api/create-task', {
       title: title.value.trim(),
       description: description.value.trim(),
       due_date: dueDate.value,
@@ -115,6 +152,8 @@ const create = async () => {
       assignee_id: assigneeId.value,
       creator_id: props.creatorId,
     })
+
+    const response = await api.get(`/api/tasks/${item_task.data.id}`)
 
     emit('created', response.data)
     resetForm()
@@ -133,6 +172,11 @@ const resetForm = () => {
   status.value = 'to-do'
   boardId.value = ''
   assigneeId.value = ''
+  titleError.value = false
+  descriptionError.value = false
+  dueDateError.value = false
+  boardError.value = false
+  assigneeError.value = false
 }
 
 onMounted(async () => {
@@ -143,8 +187,6 @@ onMounted(async () => {
     ])
     boards.value = boardsRes.data.data
     users.value = usersRes.data
-
-    console.log(usersRes.data)
   } catch (err) {
     console.error('Erro ao carregar boards ou usuários:', err)
   }

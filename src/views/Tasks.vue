@@ -24,6 +24,7 @@
             @delete="openDeleteModal"
             :showActions="true"  
             :isAdmin="userIsAdmin"
+            @click="openModal(task)"
           />
         </div>
       </div>
@@ -49,6 +50,7 @@
             @delete="openDeleteModal"
             :showActions="true"  
             :isAdmin="userIsAdmin"
+            @click="openModal(task)"
           />
         </div>
       </div>
@@ -81,6 +83,13 @@
     @created="handleTaskCreated"
     :creator-id="user.id"
   />
+
+  <TaskDetailsModal
+    v-if="selectedTask"
+    :visible="showModal"
+    :task="selectedTask"
+    @close="closeModal"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -89,6 +98,7 @@ import api from '../services/api'
 import TaskCard from '../components/TaskCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
+import TaskDetailsModal from '../components/TaskDetailsModal.vue'
 import TaskEditModal from '../components/TaskEditModal.vue'
 import TaskDeleteModal from '../components/TaskDeleteModal.vue'
 import TaskCreateModal from '../components/TaskCreateModal.vue'
@@ -110,6 +120,18 @@ const selectedTaskToDelete = ref(null)
 const showDeleteModal = ref(false)
 
 const showCreateModal = ref(false)
+
+const showModal = ref(false)
+const selectedTask = ref(null)
+
+const openModal = (task: any) => {
+  selectedTask.value = task
+  showModal.value = true
+}
+const closeModal = () => {
+  showModal.value = false
+  selectedTask.value = null
+}
 
 const openEditModal = (task: any) => {
   selectedTaskToEdit.value = task
@@ -135,6 +157,7 @@ const handleTaskUpdated = (updatedTask: any) => {
   const index = tasks.value.findIndex(b => b.id === updatedTask.id)
   if (index !== -1) {
     tasks.value[index] = updatedTask
+    console.log(updatedTask)
   }
   if (isSearching.value) {
     const searchIndex = searchResults.value.findIndex(b => b.id === updatedTask.id)
