@@ -15,7 +15,7 @@
     <div v-if="isSearching">
       <h2 class="text-2xl text-f7f7f7 mb-7">Search Results</h2>
       <div v-if="searchResults.length">
-        <div class="flex gap-7">
+        <div class="flex flex-wrap gap-7">
           <TaskCard
             v-for="task in searchResults"
             :key="task.id"
