@@ -1,9 +1,28 @@
 <template>
   <div
-    class="min-w-[170px] max-w-[200px] h-[250px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col border-3 border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
+    class="relative min-w-[170px] max-w-[200px] h-[250px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col border border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
     @click="$emit('select', item)"
   >
-    <div class="mx-auto bg-[#525392] max-w-[100px] text-[#f7f7f7] text-sm px-2 rounded-b-md">
+    <div class="absolute top-2 left-27 text-[#525392]" v-if="showActions && isAdmin">
+      <button
+        @click.stop="$emit('edit', item)"
+        class="p-1 hover:text-[#353535]"
+        title="Edit"
+        aria-label="Edit"
+      >
+        <i class="bx bx-edit text-lg"></i>
+      </button>
+      <button
+        @click.stop="$emit('delete', item)"
+        class="p-1 hover:text-red-600"
+        title="Delete"
+        aria-label="Delete"
+      >
+        <i class="bx bx-trash text-lg"></i>
+      </button>
+    </div>
+
+    <div class="mx-auto bg-[#525392] max-w-[100px] text-[#f7f7f7] text-sm px-2 rounded-b-md truncate">
       {{ item.board_name }}
     </div>
 
@@ -14,7 +33,7 @@
     />
 
     <div class="pl-5 pt-9">
-      <p class="text-[#525392] font-semibold">{{ item.title }}</p>
+      <p class="text-[#525392] font-semibold truncate">{{ item.title }}</p>
       <p class="text-black text-xs">Due in: {{ item.due_in }} days</p>
     </div>
 
@@ -34,12 +53,15 @@
 <script lang="ts" setup>
 defineProps<{
   item: {
+    id: number
     title: string
     status: 'to-do' | 'in-progress' | 'done'
     board_name?: string
     due_in?: number
   }
+  showActions?: boolean
+  isAdmin?: boolean
 }>()
 
-defineEmits(['select'])
+defineEmits(['select', 'edit', 'delete'])
 </script>
