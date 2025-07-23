@@ -1,42 +1,50 @@
 <template>
-    <div class="fixed left-0 top-0 h-screen w-16 bg-[#723046] flex flex-col items-center py-4 space-y-6 shadow-md">
-      <!-- Quadro de Tarefas -->
-      <div class="group relative cursor-pointer">
-        <router-link to="/board" class="flex flex-col items-center text-white hover:text-gray-200">
-          <i class='bx bxs-dashboard text-2xl'></i>
-          <span
-            class="absolute left-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
-            Quadro de Tarefas
-          </span>
-        </router-link>
-      </div>
-  
-      <!-- Relatório de Tarefas -->
-      <div class="group relative cursor-pointer">
-        <router-link to="/report" class="flex flex-col items-center text-white hover:text-gray-200">
-          <i class='bx bxs-report text-2xl'></i>
-          <span
-            class="absolute left-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
-            Relatório de Tarefas
-          </span>
-        </router-link>
+  <div class="w-[250px] h-screen fixed left-0 top-0 bg-[#202020] flex flex-col justify-between py-4 text-[#f7f7f7] p-6 space-y-6 shadow-md">
+     <div>
+      <div class="flex flex-col mb-14 mt-3">
+        <div class="flex items-center gap-2">
+          <i class="bx bxs-cat text-2xl"></i>
+          <h2 class="text-xl">PAWTA</h2>
+        </div>
+        <p class="text-sm font-semibold text-[#f7f7f7] uppercase tracking-widest mb-4 ml-8">Menu</p>
       </div>
 
-      <!-- logout -->
-      <div class="group relative cursor-pointer mt-auto">
-        <button id="logout-btn" @click="logout" class="flex flex-col items-center text-white hover:text-gray-200">
-            <i class='bx bxs-exit text-2xl'></i>
-          <span
-            class="absolute left-16 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
-            Logout
-          </span>
-        </button @click="logout">
+
+      <ul class="space-y-11">
+        <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]">
+          <i class="bx bxs-dashboard text-lg"></i>
+          <span>Dashboard</span>
+        </li>
+        <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]">
+          <i class="bx bx-task text-lg"></i>
+          <span>Boards</span>
+        </li>
+        <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]">
+          <i class="bx bx-book-content text-lg"></i>
+          <span>All tasks</span>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <!-- Perfil -->
+      <div class="flex items-center gap-3 mb-6">
+        <img
+          src=""
+          alt="avatar"
+          class="w-[30px] h-[30px] rounded-full object-cover"
+        />
+        <span class="text-sm">Nome</span>
+      </div>
+
+      <!-- Logout -->
+      <div class="flex items-center gap-3 bg-[#525392] p-3 rounded-lg cursor-pointer hover:opacity-90">
+        <i class="bx bx-log-out text-lg"></i>
+        <span class="text-sm font-semibold">Logout</span>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script lang="ts" setup>
 import { useAuthStore } from '../stores/auth'
@@ -50,4 +58,3 @@ const logout = async () => {
   router.push('/login')
 }
 </script>
-

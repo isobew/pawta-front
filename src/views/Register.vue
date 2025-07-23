@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
+import Cookies from 'js-cookie';
 
 const name = ref('')
 const email = ref('')
@@ -27,8 +28,10 @@ async function submit() {
     })
     router.push('/dashboard')
   } catch (error) {
-    const msg = error.response?.data?.message || 'Erro no registro. Tente novamente.'
-    $toast.error(msg)
+    const msg = error.response?.data?.message || 'Erro no registro. Tente novamente.';
+    $toast.error(msg);
+    Cookies.remove('XSRF-TOKEN');
+    Cookies.remove('pawta_session');
   }
 }
 </script>
@@ -87,7 +90,7 @@ async function submit() {
       </div>
 
       <button
-        type="submit"
+        type="submit" id="auth-btn"
         class="min-h-[2.5em] mt-6 min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer">
         REGISTER
       </button>

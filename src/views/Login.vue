@@ -2,7 +2,8 @@
     import { ref } from 'vue';
     import { useAuthStore } from '../stores/auth';
     import { useRouter } from 'vue-router';
-    import { useToast } from 'vue-toast-notification'
+    import { useToast } from 'vue-toast-notification';
+    import Cookies from 'js-cookie';
 
     const email = ref('');
     const password = ref('');
@@ -15,9 +16,10 @@
             await auth.login({ email: email.value, password: password.value });
             router.push('/dashboard');
         } catch (error) {
-            const msg = error.response?.data?.message || 'Erro no login. Tente novamente.'
-            errorMessage.value = error.response?.data?.message || "Erro no login. Tente novamente.";
-            $toast.error(msg)
+            const msg = error.response?.data?.message || 'Erro no login. Tente novamente.';
+            $toast.error(msg);
+            Cookies.remove('XSRF-TOKEN');
+            Cookies.remove('pawta_session');
         }
     }
 </script>
@@ -51,7 +53,7 @@
             required
         />
       </div>
-      <button type="submit"
+      <button type="submit" id="auth-btn"
       class="min-h-[2.5em] mt-10 min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mt-5">
       LOGIN</button>
     </form>

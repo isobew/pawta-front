@@ -1,5 +1,5 @@
 <template>
-  <Sidebar v-if="$route.meta.requiresAuth" />
+  <Sidebar />
    
   <router-view />
 </template>
