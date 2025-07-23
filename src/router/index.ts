@@ -7,7 +7,7 @@ import { useAuthStore } from '../stores/auth';
 const routes = [
   { path: '/login', component: Login, meta: { guest: true } },
   { path: '/register', component: Register, meta: { guest: true } },
-  { path: '/dashboard', component: Dashboard },
+  { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true }},
   { path: '/', redirect: '/dashboard' },
 ];
 

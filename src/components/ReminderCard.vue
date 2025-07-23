@@ -1,5 +1,8 @@
 <template>
-  <div class="min-w-[280px] max-w-[350px] h-[170px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col justify-between border-3 border-[#525392]">
+  <div
+    class="min-w-[280px] max-w-[350px] h-[170px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col justify-between border-3 border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
+    @click="$emit('select', item)"
+  >
     <div class="mx-auto bg-[#525392] max-w-[100px] text-[#f7f7f7] text-sm px-2 rounded-b-md">
       {{ item.board_name }}
     </div>
@@ -25,19 +28,22 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{
+defineProps<{
   item: {
     title: string
     status: 'to-do' | 'in-progress' | 'done'
+    board_name?: string
+    due_in?: number
   }
 }>()
 
-const statusMap: Record<typeof props.item.status, string> = {
+defineEmits(['select'])
+
+const statusMap: Record<'to-do' | 'in-progress' | 'done', string> = {
   'to-do': 'Pending',
   'in-progress': 'In progress',
   'done': 'Completed'
 }
 
-const status = statusMap[props.item.status]
+const status = statusMap[__props.item.status]
 </script>
-

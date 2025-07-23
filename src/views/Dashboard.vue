@@ -16,7 +16,12 @@
       <h2 class="text-2xl text-f7f7f7 mb-7">Search Results</h2>
       <div v-if="searchResults.length">
         <div class="flex gap-7">
-          <TaskCard v-for="task in searchResults" :key="task.id" :item="task" />
+          <TaskCard
+            v-for="task in searchResults"
+            :key="task.id"
+            :item="task"
+            @click="openModal(task)"
+          />
         </div>
       </div>
       <div v-else class="text-center text-f7f7f7 mt-6">
@@ -26,15 +31,22 @@
 
     <div v-else>
       <h2 class="text-2xl text-f7f7f7 mb-7">Tasks</h2>
-      <HorizontalSlider :items="tasks" :cardComponent="TaskCard" />
+      <HorizontalSlider :items="tasks" :cardComponent="TaskCard" @select="openModal" />
 
       <h2 class="text-2xl text-f7f7f7 mb-7 mt-15">Reminders</h2>
-      <HorizontalSlider :items="reminders" :cardComponent="ReminderCard" />
+      <HorizontalSlider :items="reminders" :cardComponent="ReminderCard" @select="openModal" />
 
       <h2 class="text-2xl text-f7f7f7 mb-7 mt-15">Boards</h2>
       <HorizontalSlider :items="boards" :cardComponent="BoardCard" />
     </div>
   </div>
+
+  <TaskDetailsModal
+    v-if="selectedTask"
+    :visible="showModal"
+    :task="selectedTask"
+    @close="closeModal"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -46,6 +58,7 @@ import TaskCard from '../components/TaskCard.vue'
 import ReminderCard from '../components/ReminderCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
+import TaskDetailsModal from '../components/TaskDetailsModal.vue'
 
 const tasks = ref([])
 const boards = ref([])
@@ -57,12 +70,22 @@ const isLoading = ref(false)
 const searchResults = ref([])
 const userName = ref('User')
 
+const selectedTask = ref(null)
+const showModal = ref(false)
+
+const openModal = (task: any) => {
+  selectedTask.value = task
+  showModal.value = true
+}
+const closeModal = () => {
+  showModal.value = false
+  selectedTask.value = null
+}
+
 onMounted(async () => {
   isLoading.value = true
 
   try {
-    
-
     const [tasksRes, boardsRes, remindersRes] = await Promise.all([
       api.get('/api/tasks'),
       api.get('/api/boards'),
