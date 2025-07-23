@@ -11,16 +11,22 @@
 
       <ul class="space-y-11">
         <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]">
-          <i class="bx bxs-dashboard text-lg"></i>
-          <span>Dashboard</span>
+          <RouterLink to="/dashboard" class="flex items-center gap-3 w-full">
+            <i class="bx bxs-dashboard text-lg"></i>
+            <span>Dashboard</span>
+          </RouterLink>
         </li>
         <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]">
-          <i class="bx bx-task text-lg"></i>
-          <span>Boards</span>
+          <RouterLink to="/boards" class="flex items-center gap-3 w-full">
+            <i class="bx bx-task text-lg"></i>
+            <span>Boards</span>
+          </RouterLink>
         </li>
         <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]">
-          <i class="bx bx-book-content text-lg"></i>
-          <span>All tasks</span>
+          <RouterLink to="/tasks" class="flex items-center gap-3 w-full">
+            <i class="bx bx-book-content text-lg"></i>
+            <span>All tasks</span>
+          </RouterLink>
         </li>
       </ul>
     </div>

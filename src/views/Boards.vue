@@ -1,8 +1,8 @@
 <template>
   <div class="flex w-[78vw] items-start justify-between">
     <div class="p-6 mb-7">
-      <h2 class="text-3xl text-f7f7f7">Welcome, {{ userName }}</h2>
-      <p class="text-md text-f7f7f7 mt-2" style="font-weight: 300;">Manage your tasks</p>
+      <h2 class="text-3xl text-f7f7f7">Boards</h2>
+      <p class="text-md text-f7f7f7 mt-2" style="font-weight: 300;">Manage your boards</p>
     </div>
     <SearchInput v-model="search" placeholder="Search..." />
   </div>
@@ -16,11 +16,11 @@
       <h2 class="text-2xl text-f7f7f7 mb-7">Search Results</h2>
       <div v-if="searchResults.length">
         <div class="flex flex-wrap gap-7">
-          <TaskCard
-            v-for="task in searchResults"
-            :key="task.id"
-            :item="task"
-            @click="openModal(task)"
+          <BoardCard
+            v-for="board in searchResults"
+            :key="board.id"
+            :item="board"
+            @click="openModal(board)"
           />
         </div>
       </div>
@@ -30,25 +30,26 @@
     </div>
 
     <div v-else>
-      <RouterLink to="/tasks" class="cursor-pointer">
-        <h2 class="text-2xl text-f7f7f7 mb-7">Tasks</h2>
-      </RouterLink>
-      <HorizontalSlider :items="tasks" :cardComponent="TaskCard" @select="openModal" />
-
-      <h2 class="text-2xl text-f7f7f7 mb-7 mt-15">Reminders</h2>
-      <HorizontalSlider :items="reminders" :cardComponent="ReminderCard" @select="openModal" />
-
-      <RouterLink to="/boards" class="cursor-pointer">
-        <h2 class="text-2xl text-f7f7f7 mb-7 mt-15">Boards</h2>
-      </RouterLink>
-      <HorizontalSlider :items="boards" :cardComponent="BoardCard" />
+      <div v-if="boards.length">
+        <div class="flex flex-wrap gap-3">
+          <BoardCard
+            v-for="board in boards"
+            :key="board.id"
+            :item="board"
+            @click="openModal(board)"
+          />
+        </div>
+      </div>
+      <div v-else class="text-center text-f7f7f7 mt-6">
+        Not found.
+      </div>
     </div>
   </div>
 
-  <TaskDetailsModal
-    v-if="selectedTask"
+  <BoardDetailsModal
+    v-if="selectedBoard"
     :visible="showModal"
-    :task="selectedTask"
+    :board="selectedBoard"
     @close="closeModal"
   />
 </template>
@@ -58,13 +59,10 @@ import { ref, onMounted, watch } from 'vue'
 import api from '../services/api'
 import HorizontalSlider from '../components/HorizontalSlider.vue'
 import BoardCard from '../components/BoardCard.vue'
-import TaskCard from '../components/TaskCard.vue'
-import ReminderCard from '../components/ReminderCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
-import TaskDetailsModal from '../components/TaskDetailsModal.vue'
+import BoardDetailsModal from '../components/BoardDetailsModal.vue'
 
-const tasks = ref([])
 const boards = ref([])
 const reminders = ref([])
 
@@ -72,36 +70,28 @@ const search = ref('')
 const isSearching = ref(false)
 const isLoading = ref(false)
 const searchResults = ref([])
-const userName = ref('User')
 
-const selectedTask = ref(null)
+const selectedBoard = ref(null)
 const showModal = ref(false)
 
-const openModal = (task: any) => {
-  selectedTask.value = task
+const openModal = (board: any) => {
+  selectedBoard.value = board
   showModal.value = true
 }
 const closeModal = () => {
   showModal.value = false
-  selectedTask.value = null
+  selectedBoard.value = null
 }
 
 onMounted(async () => {
   isLoading.value = true
 
   try {
-    const [tasksRes, boardsRes, remindersRes] = await Promise.all([
-      api.get('/api/tasks'),
+    const [boardsRes] = await Promise.all([
       api.get('/api/boards'),
-      api.get('/api/reminders')
     ])
 
-    tasks.value = tasksRes.data.data
     boards.value = boardsRes.data.data
-    reminders.value = remindersRes.data
-
-    const userRes = await api.get('/api/user')
-    userName.value = userRes.data.name || 'User'
   } catch (err) {
     console.error('Error loading dashboard data', err)
   } finally {
@@ -119,7 +109,7 @@ watch(search, async (value) => {
   isLoading.value = true
 
   try {
-    const res = await api.get('/api/tasks', {
+    const res = await api.get('/api/boards', {
       params: { search: value }
     })
     searchResults.value = res.data.data || []
