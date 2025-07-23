@@ -48,7 +48,7 @@ const emit = defineEmits(['close'])
 const close = () => emit('close')
 
 const statusMap: Record<'to-do' | 'in-progress' | 'done', string> = {
-  'to-do': 'Pending',
+  'to-do': 'To do',
   'in-progress': 'In progress',
   'done': 'Completed'
 }
