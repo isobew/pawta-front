@@ -39,7 +39,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, defineProps, defineEmits } from 'vue'
-import api from '../services/api' 
+import api from '../services/api'
 
 const props = defineProps<{ visible: boolean; board: { id: number; title: string } }>()
 const emit = defineEmits(['close', 'updated'])
@@ -64,11 +64,11 @@ const save = async () => {
 
   isSaving.value = true
   try {
-    await api.put(`api/update-board/${props.board.id}`, {
+    const response = await api.put(`api/update-board/${props.board.id}`, {
       title: editedTitle.value.trim(),
     })
 
-    emit('updated', { ...props.board, title: editedTitle.value.trim() })
+    emit('updated', response.data)
 
     close()
   } catch (err) {
