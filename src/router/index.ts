@@ -4,6 +4,7 @@ import Register from '../views/Register.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Board from '../views/Boards.vue';
 import Task from '../views/Tasks.vue';
+import BoardDetails from '../views/BoardDetails.vue';
 import { useAuthStore } from '../stores/auth';
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
   { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } },
   { path: '/boards', component: Board, meta: { requiresAuth: true } },
   { path: '/tasks', component: Task, meta: { requiresAuth: true } },
+  { path: '/board/:id', component: BoardDetails, meta: { requiresAuth: true } },
   { path: '/', redirect: '/dashboard' },
 ];
 

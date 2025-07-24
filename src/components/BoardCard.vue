@@ -1,6 +1,7 @@
 <template>
   <div
     class="relative min-w-[149px] max-w-[200px] h-[180px] bg-[#f7f7f7] rounded-lg shadow-md text-[#525392] flex flex-col items-center justify-evenly text-center border border-[#525392]"
+    @click="goToBoard"
   >
     <div class="absolute top-2 left-22 right-2 gap-2 align-self-end" v-if="showActions && isAdmin">
       <button
@@ -32,6 +33,10 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 defineProps<{
   item: {
     id: number
@@ -42,4 +47,8 @@ defineProps<{
 }>()
 
 defineEmits(['edit', 'delete'])
+
+function goToBoard() {
+  router.push(`/board/${__props.item.id}`)
+}
 </script>
