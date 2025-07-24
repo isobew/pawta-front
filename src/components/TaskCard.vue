@@ -43,7 +43,7 @@
         :class="{
           'w-1/3 bg-[#525392]': item.status === 'to-do',
           'w-2/3 bg-[#525392]': item.status === 'in-progress',
-          'w-full bg-[#525392]': item.status === 'done',
+          'w-full bg-[#525392]': item.status === 'finished',
         }"
       ></div>
     </div>
@@ -55,7 +55,7 @@ defineProps<{
   item: {
     id: number
     title: string
-    status: 'to-do' | 'in-progress' | 'done'
+    status: 'to-do' | 'in-progress' | 'finished'
     board_name?: string
     due_in?: number
     board_id: number

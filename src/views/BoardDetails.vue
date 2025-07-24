@@ -1,8 +1,13 @@
 <template>
   <div class="p-10 w-[80vw] min-h-screen">
     <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-5">
-      <h1 class="text-2xl sm:mb-5 text-white">{{ board?.title || 'Carregando...' }}</h1>
-      <button @click="showCreateModal = true" class="text-white px-4 py-2 rounded bg-[#525392] hover:bg-[#403f7a]">+ Tarefa</button>
+      <h1 class="text-2xl sm:mb-5 text-white">{{ board?.title || 'Loading...' }}</h1>
+      <div class="justify-end pr-12" v-if="userIsAdmin">
+        <button id="auth-btn"
+            @click="showCreateModal = true"
+            class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
+            + Create task</button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
@@ -44,26 +49,35 @@
 
     </div>
 
-    <TaskFormModal
-      v-if="showCreateModal || selectedTaskToEdit"
+     <!-- Modais -->
+    <TaskEditModal
+      v-if="selectedTaskToEdit"
+      :visible="showEditModal"
       :task="selectedTaskToEdit"
-      :board-id="board?.id"
-      :creator-id="userId"
-      @close="closeCreateOrEditModal"
-      @refresh="fetchBoardWithTasks"
+      @close="closeEditModal"
+      @updated="handleTaskUpdated"
     />
 
-    <ConfirmDeleteModal
-      v-if="showDeleteModal"
+    <TaskDeleteModal
+      v-if="selectedTaskToDelete"
+      :visible="showDeleteModal"
       :task="selectedTaskToDelete"
-      @cancel="closeDeleteModal"
-      @confirm="confirmAndDelete"
+      @close="closeDeleteModal"
+      @deleted="handleTaskDeleted"
     />
 
-    <InfoModal
-      v-if="showModal"
+    <TaskCreateModal
+      :visible="showCreateModal"
+      @close="showCreateModal = false"
+      @created="handleTaskCreated"
+      :creator-id="user.id"
+    />
+
+    <TaskDetailsModal
+      v-if="selectedTask"
+      :visible="showModal"
       :task="selectedTask"
-      @cancel="closeModal"
+      @close="closeModal"
     />
   </div>
 </template>
@@ -74,9 +88,10 @@ import { useRoute } from 'vue-router';
 import api from '../services/api';
 
 import Column from '../components/Column.vue';
-import TaskFormModal from '../components/TaskFormModal.vue';
-import ConfirmDeleteModal from '../components/TaskDeleteModal.vue';
-import InfoModal from '../components/TaskDetailsModal.vue';
+import TaskDeleteModal from '../components/TaskDeleteModal.vue';
+import TaskEditModal from '../components/TaskEditModal.vue';
+import TaskDetailsModal from '../components/TaskDetailsModal.vue';
+import TaskCreateModal from '../components/TaskCreateModal.vue';
 
 interface Task {
   id: string;
@@ -99,16 +114,50 @@ const route = useRoute();
 const board = ref<Board | null>(null);
 const tasks = ref<Task[]>([]);
 
-const selectedTask = ref<Task | null>(null);
-const selectedTaskToEdit = ref<Task | null>(null);
-const selectedTaskToDelete = ref<Task | null>(null);
+const userIsAdmin = ref(true)
 
-const showCreateModal = ref(false);
-const showDeleteModal = ref(false);
-const showModal = ref(false);
+const selectedTaskToEdit = ref(null)
+const showEditModal = ref(false)
 
-// Simula o ID do usuário logado 
-const userId = 1;
+const selectedTaskToDelete = ref(null)
+const showDeleteModal = ref(false)
+
+const showCreateModal = ref(false)
+
+const showModal = ref(false)
+const selectedTask = ref(null)
+
+const openModal = (task: any) => {
+  selectedTask.value = task
+  showModal.value = true
+}
+const closeModal = () => {
+  showModal.value = false
+  selectedTask.value = null
+}
+
+const openEditModal = (task: any) => {
+  selectedTaskToEdit.value = task
+  showEditModal.value = true
+}
+
+const closeEditModal = () => {
+  showEditModal.value = false
+  selectedTaskToEdit.value = null
+}
+
+const openDeleteModal = (task: any) => {
+  selectedTaskToDelete.value = task
+  showDeleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false
+  selectedTaskToDelete.value = null
+}
+
+// Simulação do usuário logado
+const user = ref({ id: 1 })
 
 const fetchBoardWithTasks = async () => {
   try {
@@ -135,30 +184,6 @@ const onTaskMoved = ({ id, status }: { id: string; status: string }) => {
   updateTaskStatus(id, status);
 };
 
-const openModal = (task: Task) => {
-  selectedTask.value = task;
-  showModal.value = true;
-};
-
-const closeModal = () => {
-  showModal.value = false;
-  selectedTask.value = null;
-};
-
-const openEditModal = (task: Task) => {
-  selectedTaskToEdit.value = task;
-};
-
-const openDeleteModal = (task: Task) => {
-  selectedTaskToDelete.value = task;
-  showDeleteModal.value = true;
-};
-
-const closeDeleteModal = () => {
-  selectedTaskToDelete.value = null;
-  showDeleteModal.value = false;
-};
-
 const confirmAndDelete = async () => {
   if (selectedTaskToDelete.value) {
     try {
@@ -171,10 +196,10 @@ const confirmAndDelete = async () => {
   }
 };
 
-const closeCreateOrEditModal = () => {
-  selectedTaskToEdit.value = null;
+onMounted(fetchBoardWithTasks);
+
+const handleTaskCreated = () => {
+  fetchBoardWithTasks();
   showCreateModal.value = false;
 };
-
-onMounted(fetchBoardWithTasks);
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative min-w-[149px] max-w-[200px] h-[180px] bg-[#f7f7f7] rounded-lg shadow-md text-[#525392] flex flex-col items-center justify-evenly text-center border border-[#525392]"
+    class="relative min-w-[149px] max-w-[200px] h-[180px] bg-[#f7f7f7] rounded-lg shadow-md text-[#525392] flex flex-col items-center justify-evenly text-center border border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
     @click="goToBoard"
   >
     <div class="absolute top-2 left-22 right-2 gap-2 align-self-end" v-if="showActions && isAdmin">
