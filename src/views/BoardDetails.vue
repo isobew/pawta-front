@@ -50,7 +50,7 @@
     </div>
 
      <!-- Modais -->
-    <TaskEditModal
+    <BoardTaskEditModal
       v-if="selectedTaskToEdit"
       :visible="showEditModal"
       :task="selectedTaskToEdit"
@@ -66,7 +66,7 @@
       @deleted="handleTaskDeleted"
     />
 
-    <TaskCreateModal
+    <BoardTaskCreateModal
       :visible="showCreateModal"
       @close="showCreateModal = false"
       @created="handleTaskCreated"
@@ -89,9 +89,9 @@ import api from '../services/api';
 
 import Column from '../components/Column.vue';
 import TaskDeleteModal from '../components/TaskDeleteModal.vue';
-import TaskEditModal from '../components/TaskEditModal.vue';
+import BoardTaskEditModal from '../components/BoardTaskEditModal.vue';
 import TaskDetailsModal from '../components/TaskDetailsModal.vue';
-import TaskCreateModal from '../components/TaskCreateModal.vue';
+import BoardTaskCreateModal from '../components/BoardTaskCreateModal.vue';
 
 interface Task {
   id: string;
@@ -201,5 +201,15 @@ onMounted(fetchBoardWithTasks);
 const handleTaskCreated = () => {
   fetchBoardWithTasks();
   showCreateModal.value = false;
+};
+
+const handleTaskUpdated = () => {
+  fetchBoardWithTasks();
+  showEditModal.value = false;
+};
+
+const handleTaskDeleted = () => {
+  fetchBoardWithTasks();
+  showDeletedModal.value = false;
 };
 </script>

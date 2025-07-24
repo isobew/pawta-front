@@ -3,12 +3,13 @@
     class="relative min-w-[170px] max-w-[200px] h-[250px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col border border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
     @click="$emit('select', item)"
   >
-    <div class="absolute top-2 left-27 text-[#525392]" v-if="showActions && isAdmin">
+    <div class="absolute top-2 left-27 text-[#525392]">
       <button
         @click.stop="$emit('edit', item)"
         class="p-1 hover:text-[#353535]"
         title="Edit"
         aria-label="Edit"
+        v-if="showActions && isAdmin"
       >
         <i class="bx bx-edit text-lg"></i>
       </button>

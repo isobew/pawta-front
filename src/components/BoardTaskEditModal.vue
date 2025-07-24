@@ -46,18 +46,6 @@
       </select>
 
       <select
-        v-model="editedBoardId"
-        class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
-        :class="{ 'border-red-500': boardError }"
-      >
-        <option disabled value="">Select Board</option>
-        <option v-for="board in boards" :key="board.id" :value="board.id">
-          {{ board.title }}
-        </option>
-      </select>
-      <p v-if="boardError" class="text-red-500 text-sm mb-4">Board is required</p>
-
-      <select
         v-model="editedAssigneeId"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-6"
         :class="{ 'border-red-500': assigneeError }"
@@ -92,7 +80,11 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits, watch, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import api from '../services/api'
+
+const route = useRoute()
+
 
 const props = defineProps<{
   visible: boolean
@@ -127,7 +119,6 @@ const today = new Date().toISOString().split('T')[0]
 const titleError = ref(false)
 const descriptionError = ref(false)
 const dueDateError = ref(false)
-const boardError = ref(false)
 const assigneeError = ref(false)
 
 watch(
@@ -138,13 +129,11 @@ watch(
       editedDescription.value = newTask.description || ''
       editedDueDate.value = newTask.due_date || ''
       editedStatus.value = newTask.status || 'to-do'
-      editedBoardId.value = newTask.board_id || ''
       editedAssigneeId.value = newTask.assignee_id || ''
       // reset errors
       titleError.value = false
       descriptionError.value = false
       dueDateError.value = false
-      boardError.value = false
       assigneeError.value = false
     }
   },
@@ -161,7 +150,6 @@ const isValidForm = computed(() => {
     editedDescription.value.trim() !== '' &&
     editedDueDate.value !== '' && 
     new Date(editedDueDate.value) > new Date(today) &&
-    editedBoardId.value !== '' &&
     editedAssigneeId.value !== ''
   )
 })
@@ -170,7 +158,6 @@ const save = async () => {
   titleError.value = editedTitle.value.trim() === ''
   descriptionError.value = editedDescription.value.trim() === ''
   dueDateError.value = editedDueDate.value === '' || new Date(editedDueDate.value) < new Date(today)
-  boardError.value = editedBoardId.value === ''
   assigneeError.value = editedAssigneeId.value === ''
 
   console.log(isValidForm)
@@ -199,13 +186,14 @@ const save = async () => {
 }
 
 onMounted(async () => {
+  editedBoardId.value = route.params.id as string
+
   try {
-    const [boardsRes, usersRes] = await Promise.all([
-      api.get('/api/boards'),
+    const [usersRes] = await Promise.all([
       api.get('/api/users'),
     ])
-    boards.value = boardsRes.data.data
     users.value = usersRes.data
+    console.log(users.value)
   } catch (err) {
     console.error('Erro ao carregar boards ou usuários:', err)
   }

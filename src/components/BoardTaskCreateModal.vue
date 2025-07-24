@@ -46,18 +46,6 @@
       </select>
 
       <select
-        v-model="boardId"
-        class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
-        :class="{ 'border-red-500': boardError }"
-      >
-        <option disabled value="">Select Board</option>
-        <option v-for="board in boards" :key="board.id" :value="board.id">
-          {{ board.title }}
-        </option>
-      </select>
-      <p v-if="boardError" class="text-red-500 text-sm mb-4">Board is required</p>
-
-      <select
         v-model="assigneeId"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-6"
         :class="{ 'border-red-500': assigneeError }"
@@ -92,7 +80,10 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import api from '../services/api'
+
+const route = useRoute()
 
 const props = defineProps<{ visible: boolean; creatorId: number }>()
 const emit = defineEmits(['close', 'created'])
@@ -114,7 +105,6 @@ const today = new Date().toISOString().split('T')[0]
 const titleError = ref(false)
 const descriptionError = ref(false)
 const dueDateError = ref(false)
-const boardError = ref(false)
 const assigneeError = ref(false)
 
 const close = () => {
@@ -136,7 +126,6 @@ const create = async () => {
   titleError.value = title.value.trim() === ''
   descriptionError.value = description.value.trim() === ''
   dueDateError.value = dueDate.value === '' || new Date(dueDate.value) < new Date(today)
-  boardError.value = boardId.value === ''
   assigneeError.value = assigneeId.value === ''
 
   if (!isValidForm.value) return
@@ -170,25 +159,21 @@ const resetForm = () => {
   description.value = ''
   dueDate.value = ''
   status.value = 'to-do'
-  boardId.value = ''
   assigneeId.value = ''
   titleError.value = false
   descriptionError.value = false
   dueDateError.value = false
-  boardError.value = false
   assigneeError.value = false
 }
 
 onMounted(async () => {
+  boardId.value = route.params.id as string
+
   try {
-    const [boardsRes, usersRes] = await Promise.all([
-      api.get('/api/boards'),
-      api.get('/api/users'),
-    ])
-    boards.value = boardsRes.data.data
+    const usersRes = await api.get('/api/users')
     users.value = usersRes.data
   } catch (err) {
-    console.error('Erro ao carregar boards ou usuários:', err)
+    console.error('Error:', err)
   }
 })
 </script>
