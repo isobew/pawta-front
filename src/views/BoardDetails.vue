@@ -1,7 +1,7 @@
 <template>
   <div class="p-10 w-[80vw] min-h-screen">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-5">
-      <h1 class="text-2xl sm:mb-5 text-white">{{ board?.title || 'Loading...' }}</h1>
+    <div class="flex flex-col md:flex-row justify-between items-center mb-20 gap-5">
+      <h1 class="text-2xl text-[#f7f7f7]">{{ board?.title || 'Loading...' }}</h1>
       <div class="justify-end pr-12" v-if="userIsAdmin">
         <button id="auth-btn"
             @click="showCreateModal = true"
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
       <Column
         title="To do"
         status="to-do"
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '../services/api';
 
@@ -92,6 +92,8 @@ import TaskDeleteModal from '../components/TaskDeleteModal.vue';
 import BoardTaskEditModal from '../components/BoardTaskEditModal.vue';
 import TaskDetailsModal from '../components/TaskDetailsModal.vue';
 import BoardTaskCreateModal from '../components/BoardTaskCreateModal.vue';
+
+import { useAuthStore } from '../stores/auth';
 
 interface Task {
   id: string;
@@ -102,6 +104,7 @@ interface Task {
   createdAt: string;
   due_date: string;
   assignee_id?: string;
+  due_in: number;
 }
 
 interface Board {
@@ -110,11 +113,15 @@ interface Board {
   description: string;
 }
 
+const auth = useAuthStore();
+const user = computed(() => auth.user);
+
+const isAdmin = computed(() => user.value.is_admin == true);
+const userIsAdmin = isAdmin.value;
+
 const route = useRoute();
 const board = ref<Board | null>(null);
 const tasks = ref<Task[]>([]);
-
-const userIsAdmin = ref(true)
 
 const selectedTaskToEdit = ref(null)
 const showEditModal = ref(false)
@@ -156,16 +163,12 @@ const closeDeleteModal = () => {
   selectedTaskToDelete.value = null
 }
 
-// Simulação do usuário logado
-const user = ref({ id: 1 })
-
 const fetchBoardWithTasks = async () => {
   try {
     const boardId = route.params.id;
     const res = await api.get(`/api/board/${boardId}`);
     board.value = res.data.board;
     tasks.value = res.data.tasks || [];
-    console.log(tasks.value[0])
   } catch (error) {
     console.error('Erro ao buscar o quadro com tarefas:', error);
   }
@@ -210,6 +213,6 @@ const handleTaskUpdated = () => {
 
 const handleTaskDeleted = () => {
   fetchBoardWithTasks();
-  showDeletedModal.value = false;
+  showDeleteModal.value = false;
 };
 </script>

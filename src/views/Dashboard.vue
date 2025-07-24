@@ -30,13 +30,14 @@
     </div>
 
     <div v-else>
-      <RouterLink to="/tasks" class="cursor-pointer">
+      <h2 class="text-lg text-f7f7f7 mb-20 mt-15 text-center" v-if="tasks.length == 0">You have no tasks yet.</h2>
+      <RouterLink to="/tasks" class="cursor-pointer" v-if="tasks.length > 0">
         <h2 class="text-2xl text-f7f7f7 mb-7">Tasks</h2>
       </RouterLink>
-      <HorizontalSlider :items="tasks" :cardComponent="TaskCard" @select="openModal" />
+      <HorizontalSlider :items="tasks" :cardComponent="TaskCard" @select="openModal" v-if="tasks.length > 0" />
 
-      <h2 class="text-2xl text-f7f7f7 mb-7 mt-15">Reminders</h2>
-      <HorizontalSlider :items="reminders" :cardComponent="ReminderCard" @select="openModal" />
+      <h2 class="text-2xl text-f7f7f7 mb-7 mt-15" v-if="tasks.length > 0">Reminders</h2>
+      <HorizontalSlider :items="reminders" :cardComponent="ReminderCard" @select="openModal" v-if="tasks.length > 0" />
 
       <RouterLink to="/boards" class="cursor-pointer">
         <h2 class="text-2xl text-f7f7f7 mb-7 mt-15">Boards</h2>

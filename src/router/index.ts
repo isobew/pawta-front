@@ -1,20 +1,43 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
+
+import AuthLayout from '../layouts/AuthLayout.vue';
+import UserLayout from '../layouts/UserLayout.vue';
+
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Board from '../views/Boards.vue';
 import Task from '../views/Tasks.vue';
 import BoardDetails from '../views/BoardDetails.vue';
-import { useAuthStore } from '../stores/auth';
 
 const routes = [
-  { path: '/login', component: Login, meta: { guest: true } },
-  { path: '/register', component: Register, meta: { guest: true } },
-  { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } },
-  { path: '/boards', component: Board, meta: { requiresAuth: true } },
-  { path: '/tasks', component: Task, meta: { requiresAuth: true } },
-  { path: '/board/:id', component: BoardDetails, meta: { requiresAuth: true } },
-  { path: '/', redirect: '/dashboard' },
+  {
+    path: '/',
+    redirect: '/dashboard',
+  },
+
+  {
+    path: '/',
+    component: AuthLayout,
+    meta: { guest: true },
+    children: [
+      { path: '/login', component: Login },
+      { path: '/register', component: Register },
+    ],
+  },
+
+  {
+    path: '/',
+    component: UserLayout,
+    meta: { requiresAuth: true },
+    children: [
+      { path: '/dashboard', component: Dashboard },
+      { path: '/boards', component: Board },
+      { path: '/tasks', component: Task },
+      { path: '/board/:id', component: BoardDetails },
+    ],
+  },
 ];
 
 const router = createRouter({

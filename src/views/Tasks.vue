@@ -93,7 +93,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import api from '../services/api'
 import TaskCard from '../components/TaskCard.vue'
 import SearchInput from '../components/SearchInput.vue'
@@ -102,16 +102,31 @@ import TaskDetailsModal from '../components/TaskDetailsModal.vue'
 import TaskEditModal from '../components/TaskEditModal.vue'
 import TaskDeleteModal from '../components/TaskDeleteModal.vue'
 import TaskCreateModal from '../components/TaskCreateModal.vue'
+import { useAuthStore } from '../stores/auth'
 
-// Simulação do usuário logado
-const user = ref({ id: 1 })
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  creator_id: string;
+  createdAt: string;
+  due_date: string;
+  assignee_id?: string;
+  due_in: number;
+}
+
+const auth = useAuthStore();
+const user = computed(() => auth.user);
+
+const isAdmin = computed(() => user.value.is_admin == true);
+const userIsAdmin = isAdmin.value;
 
 const tasks = ref([])
 const search = ref('')
 const isSearching = ref(false)
 const isLoading = ref(false)
 const searchResults = ref([])
-const userIsAdmin = ref(true)
 
 const selectedTaskToEdit = ref(null)
 const showEditModal = ref(false)
@@ -153,11 +168,10 @@ const closeDeleteModal = () => {
   selectedTaskToDelete.value = null
 }
 
-const handleTaskUpdated = (updatedTask: any) => {
+const handleTaskUpdated = (updatedTask: Task) => {
   const index = tasks.value.findIndex(b => b.id === updatedTask.id)
   if (index !== -1) {
     tasks.value[index] = updatedTask
-    console.log(updatedTask)
   }
   if (isSearching.value) {
     const searchIndex = searchResults.value.findIndex(b => b.id === updatedTask.id)
@@ -176,7 +190,7 @@ const handleTaskDeleted = (deletedTaskId: number) => {
   closeDeleteModal()
 }
 
-const handleTaskCreated = (newTask: any) => {
+const handleTaskCreated = (newTask: Task) => {
   tasks.value.unshift(newTask)
   if (isSearching.value && search.value) {
     searchResults.value.unshift(newTask)

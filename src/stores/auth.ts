@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import api from '../services/api';
 
 export const useAuthStore = defineStore('auth', {
+  persist: true,
   state: () => ({
     user: null as null | Record<string, any>,
   }),
