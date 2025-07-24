@@ -43,7 +43,7 @@ async function submit() {
       <h1 class="title-form">Register your account!</h1>
     </div>
 
-    <form @submit.prevent="submit" class="my-5 w-full">
+    <form @submit.prevent="submit" class="my-5 w-full flex flex-col items-center">
 
       <div class="relative mt-4">
         <i class="bx bx-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 text-xl"></i>

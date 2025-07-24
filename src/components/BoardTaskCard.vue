@@ -53,8 +53,8 @@ defineProps<{
     id: number
     title: string
     status: 'to-do' | 'in-progress' | 'finished'
-    board_name?: string
-    due_in?: number
+    board_name: string
+    due_in: number
     board_id: number
     assignee_id: number
   }

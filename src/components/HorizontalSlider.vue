@@ -50,7 +50,6 @@ function handleScroll() {
   if (!slider.value) return
 
   const el = slider.value
-   console.log('scrollLeft:', el.scrollLeft, 'clientWidth:', el.clientWidth, 'scrollWidth:', el.scrollWidth)
   showLeftArrow.value = el.scrollLeft > 10
   showRightArrow.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 10
 }

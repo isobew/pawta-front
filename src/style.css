@@ -78,23 +78,7 @@ button {
 
 #app {
   height: 100vh;
-  max-width: 80vw;
-  margin: 30px 280px;
-  /* padding: 2rem; */
-  /* text-align: center; */
-}
-
-@media (prefers-color-scheme: light) {
-  /* :root {
-    color: #bb5678;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #bb5678;
-  }
-  button {
-    background-color: #fe99bb;
-  } */
+  width: 100vw;
 }
 
 .form-container {
@@ -102,14 +86,11 @@ button {
   flex-direction: column;
   align-items: center; 
   max-width: 500px;
-  margin: 0 auto; 
   padding: 80px 80px 30px; 
   background-color: #2F2F2F;
   box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
-  /* backdrop-filter: blur(9px); */
   border-radius: 15px;
   color: white;
-  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); */
   font-size: 17px;
 }
 
@@ -118,6 +99,21 @@ button {
   font-size: 25px;
   font-weight: 400;
   font-style: normal;
+}
+
+@media (max-width: 600px) {
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin: 0 auto;
+    padding: 80px 40px 30px; 
+    justify-content: center;
+  }
+
+  .title-form {
+    font-size: 18px;
+  }
 }
 
 .input-form {
