@@ -17,9 +17,9 @@
       <div v-if="searchResults.length">
         <div class="flex flex-wrap gap-7">
           <TaskCard
-            v-for="board in searchResults"
-            :key="board.id"
-            :item="board"
+            v-for="task in searchResults"
+            :key="task.id"
+            :item="task"
             @edit="openEditModal"
             @delete="openDeleteModal"
             :showActions="true"  
