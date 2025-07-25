@@ -83,7 +83,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import api from '../services/api'
 import BoardCard from '../components/BoardCard.vue'
 import SearchInput from '../components/SearchInput.vue'
@@ -91,14 +91,23 @@ import FullPageLoader from '../components/FullPageLoader.vue'
 import BoardEditModal from '../components/BoardEditModal.vue'
 import BoardDeleteModal from '../components/BoardDeleteModal.vue'
 import BoardCreateModal from '../components/BoardCreateModal.vue'
+import { useAuthStore } from '../stores/auth'
+
+interface Board {
+  id: string;
+  title: string;
+}
+
+const auth = useAuthStore();
+const user = computed(() => auth.user);
+
+const userIsAdmin = computed(() => user.value.is_admin == true);
 
 const boards = ref([])
 const search = ref('')
 const isSearching = ref(false)
 const isLoading = ref(false)
 const searchResults = ref([])
-//ajustar pra req
-const userIsAdmin = ref(true)
 
 const selectedBoardToEdit = ref(null)
 const showEditModal = ref(false)
@@ -108,7 +117,7 @@ const showDeleteModal = ref(false)
 
 const showCreateModal = ref(false)
 
-const openEditModal = (board: any) => {
+const openEditModal = (board: Board) => {
   selectedBoardToEdit.value = board
   showEditModal.value = true
 }
@@ -118,7 +127,7 @@ const closeEditModal = () => {
   selectedBoardToEdit.value = null
 }
 
-const openDeleteModal = (board: any) => {
+const openDeleteModal = (board: Board) => {
   selectedBoardToDelete.value = board
   showDeleteModal.value = true
 }
@@ -128,7 +137,7 @@ const closeDeleteModal = () => {
   selectedBoardToDelete.value = null
 }
 
-const handleBoardUpdated = (updatedBoard: any) => {
+const handleBoardUpdated = (updatedBoard: Board) => {
   const index = boards.value.findIndex(b => b.id === updatedBoard.id)
   if (index !== -1) {
     boards.value[index] = updatedBoard
@@ -150,7 +159,7 @@ const handleBoardDeleted = (deletedBoardId: number) => {
   closeDeleteModal()
 }
 
-const handleBoardCreated = (newBoard: any) => {
+const handleBoardCreated = (newBoard: Board) => {
   boards.value.unshift(newBoard)
   if (isSearching.value && search.value) {
     searchResults.value.unshift(newBoard)

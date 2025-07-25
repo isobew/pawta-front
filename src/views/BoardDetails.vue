@@ -116,8 +116,7 @@ interface Board {
 const auth = useAuthStore();
 const user = computed(() => auth.user);
 
-const isAdmin = computed(() => user.value.is_admin == true);
-const userIsAdmin = isAdmin.value;
+const userIsAdmin = computed(() => user.value.is_admin == true);
 
 const route = useRoute();
 const board = ref<Board | null>(null);
