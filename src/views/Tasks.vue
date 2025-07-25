@@ -262,7 +262,7 @@ const exportTasks = async () => {
     link.click();
     link.remove();
   } catch (error) {
-    console.error('Erro ao exportar tasks:', error);
+    console.error('Error exporting tasks:', error);
   }
 };
 
