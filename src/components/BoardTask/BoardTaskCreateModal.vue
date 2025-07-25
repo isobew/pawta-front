@@ -81,7 +81,7 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import api from '../services/api'
+import api from '../../services/api'
 
 const route = useRoute()
 

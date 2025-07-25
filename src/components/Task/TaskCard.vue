@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative min-w-[170px] max-w-[200px] h-[250px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col border border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
+    class="relative w-[178px] h-[250px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col border border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
     @click="$emit('select', item)"
   >
     <div class="absolute top-2 left-27 text-[#525392]" v-if="showActions">
@@ -28,12 +28,12 @@
     </div>
 
     <img
-      src="../assets/purplecat.svg"
+      src="../../assets/purplecat.svg"
       alt="avatar"
       class="w-[100px] h-[100px] object-cover mx-auto mt-5"
     />
 
-    <div class="pl-5 pt-9">
+    <div class="px-5 pt-9">
       <p class="text-[#525392] font-semibold truncate">{{ item.title }}</p>
       <p class="text-black text-xs">Due in: {{ item.due_in }} days</p>
     </div>

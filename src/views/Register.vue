@@ -14,11 +14,6 @@ const router = useRouter()
 const $toast = useToast()
 
 async function submit() {
-  if (password.value !== confirmPassword.value) {
-    $toast.error('As senhas não coincidem.')
-    return
-  }
-
   try {
     await auth.register({
       name: name.value,
@@ -26,9 +21,11 @@ async function submit() {
       password: password.value,
       password_confirmation: confirmPassword.value
     })
+    const msg = 'User created successfully.';
+    $toast.success(msg);
     router.push('/dashboard')
   } catch (error) {
-    const msg = error.response?.data?.message || 'Erro no registro. Tente novamente.';
+    const msg = error.response?.data?.message || 'Error.';
     $toast.error(msg);
     Cookies.remove('XSRF-TOKEN');
     Cookies.remove('pawta_session');
@@ -97,8 +94,8 @@ async function submit() {
     </form>
 
     <p class="mt-5 pt-5 text-sm">
-      Já tem uma conta?
-      <a href="/login" class="font-bold">Entrar</a>
+      Already have an account?
+      <a href="/login" class="font-bold">Login</a>
     </p>
   </div>
 </template>

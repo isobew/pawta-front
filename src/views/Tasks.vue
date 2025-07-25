@@ -53,6 +53,29 @@
             @click="openModal(task)"
           />
         </div>
+
+        <div
+          class="flex justify-between items-center mt-6 text-[#525392] w-[96%]"
+          v-if="lastPage > 1"
+        >
+          <button
+            :disabled="currentPage === 1"
+            @click="fetchTasks(currentPage - 1)"
+            class="px-4 py-2 rounded bg-[#e4e4e4] hover:bg-[#dcdcdc] disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          <span class="text-[#f7f7f7]">Page {{ currentPage }} de {{ lastPage }}</span>
+
+          <button
+            :disabled="currentPage === lastPage"
+            @click="fetchTasks(currentPage + 1)"
+            class="px-4 py-2 rounded bg-[#e4e4e4] hover:bg-[#dcdcdc] disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
       <div v-else class="text-center text-f7f7f7 mt-6">
         Not found.
@@ -95,13 +118,13 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import api from '../services/api'
-import TaskCard from '../components/TaskCard.vue'
+import TaskCard from '../components/Task/TaskCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
-import TaskDetailsModal from '../components/TaskDetailsModal.vue'
-import TaskEditModal from '../components/TaskEditModal.vue'
-import TaskDeleteModal from '../components/TaskDeleteModal.vue'
-import TaskCreateModal from '../components/TaskCreateModal.vue'
+import TaskDetailsModal from '../components/Task/TaskDetailsModal.vue'
+import TaskEditModal from '../components/Task/TaskEditModal.vue'
+import TaskDeleteModal from '../components/Task/TaskDeleteModal.vue'
+import TaskCreateModal from '../components/Task/TaskCreateModal.vue'
 import { useAuthStore } from '../stores/auth'
 
 interface Task {
@@ -121,16 +144,19 @@ const user = computed(() => auth.user);
 
 const userIsAdmin = computed(() => user.value.is_admin == true);
 
-const tasks = ref([])
+const tasks = ref<Task[]>([])
+const currentPage = ref(1)
+const lastPage = ref(1)
+
 const search = ref('')
 const isSearching = ref(false)
 const isLoading = ref(false)
-const searchResults = ref([])
+const searchResults = ref<Task[]>([])
 
-const selectedTaskToEdit = ref(null)
+const selectedTaskToEdit = ref<Task | null>(null)
 const showEditModal = ref(false)
 
-const selectedTaskToDelete = ref(null)
+const selectedTaskToDelete = ref<Task | null>(null)
 const showDeleteModal = ref(false)
 
 const showCreateModal = ref(false)
@@ -138,7 +164,7 @@ const showCreateModal = ref(false)
 const showModal = ref(false)
 const selectedTask = ref(null)
 
-const openModal = (task: any) => {
+const openModal = (task: Task) => {
   selectedTask.value = task
   showModal.value = true
 }
@@ -147,7 +173,7 @@ const closeModal = () => {
   selectedTask.value = null
 }
 
-const openEditModal = (task: any) => {
+const openEditModal = (task: Task) => {
   selectedTaskToEdit.value = task
   showEditModal.value = true
 }
@@ -157,7 +183,7 @@ const closeEditModal = () => {
   selectedTaskToEdit.value = null
 }
 
-const openDeleteModal = (task: any) => {
+const openDeleteModal = (task: Task) => {
   selectedTaskToDelete.value = task
   showDeleteModal.value = true
 }
@@ -197,16 +223,24 @@ const handleTaskCreated = (newTask: Task) => {
   showCreateModal.value = false
 }
 
-onMounted(async () => {
+const fetchTasks = async (page = 1) => {
   isLoading.value = true
   try {
-    const tasksRes = await api.get('/api/tasks')
-    tasks.value = tasksRes.data.data
+    const response = await api.get('/api/tasks', {
+      params: { page }
+    })
+    tasks.value = response.data.data
+    currentPage.value = response.data.current_page
+    lastPage.value = response.data.last_page
   } catch (err) {
     console.error('Error loading tasks data', err)
   } finally {
     isLoading.value = false
   }
+}
+
+onMounted(async () => {
+  fetchTasks()
 })
 
 watch(search, async (value) => {

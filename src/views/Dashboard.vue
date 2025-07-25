@@ -58,12 +58,24 @@
 import { ref, onMounted, watch } from 'vue'
 import api from '../services/api'
 import HorizontalSlider from '../components/HorizontalSlider.vue'
-import BoardCard from '../components/BoardCard.vue'
-import TaskCard from '../components/TaskCard.vue'
-import ReminderCard from '../components/ReminderCard.vue'
+import BoardCard from '../components/Board/BoardCard.vue'
+import TaskCard from '../components/Task/TaskCard.vue'
+import ReminderCard from '../components/Task/ReminderCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
-import TaskDetailsModal from '../components/TaskDetailsModal.vue'
+import TaskDetailsModal from '../components/Task/TaskDetailsModal.vue'
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  creator_id: string;
+  createdAt: string;
+  due_date: string;
+  assignee_id?: string;
+  due_in: number;
+}
 
 const tasks = ref([])
 const boards = ref([])
@@ -78,7 +90,7 @@ const userName = ref('')
 const selectedTask = ref(null)
 const showModal = ref(false)
 
-const openModal = (task: any) => {
+const openModal = (task: Task) => {
   selectedTask.value = task
   showModal.value = true
 }

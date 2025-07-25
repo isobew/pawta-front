@@ -39,7 +39,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, defineProps, defineEmits } from 'vue'
-import api from '../services/api'
+import api from '../../services/api'
 
 const props = defineProps<{ visible: boolean; board: { id: number; title: string } }>()
 const emit = defineEmits(['close', 'updated'])

@@ -3,14 +3,14 @@
     class="min-w-[280px] max-w-[350px] h-[170px] bg-[#f7f7f7] rounded-lg shadow-md flex flex-col justify-between border-3 border-[#525392] cursor-pointer hover:scale-[1.02] transition-transform"
     @click="$emit('select', item)"
   >
-    <div class="mx-auto bg-[#525392] max-w-[100px] text-[#f7f7f7] text-sm px-2 rounded-b-md">
+    <div class="mx-auto bg-[#525392] max-w-[100px] text-[#f7f7f7] text-sm px-2 rounded-b-md truncate">
       {{ item.board_name }}
     </div>
     <div class="px-5">
-      <p class="text-[#525392] text-2xl">{{ item.title }}</p>
+      <p class="text-[#525392] text-2xl truncate">{{ item.title }}</p>
       <div class="flex items-end justify-between">
         <p class="text-[#353535E6] text-sm">{{ status }}</p>
-        <p class="text-black text-sm">Due in: {{ item.due_in }} days</p>
+        <p class="text-black text-sm truncate">Due in: {{ item.due_in }} days</p>
       </div>
     </div>
 
