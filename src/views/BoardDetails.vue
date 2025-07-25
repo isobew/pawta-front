@@ -1,16 +1,21 @@
 <template>
   <div class="p-10 w-[80vw] min-h-screen">
     <div class="flex flex-col md:flex-row justify-between items-center mb-20 gap-5">
-      <h1 class="text-2xl text-[#f7f7f7]">{{ board?.title || 'Loading...' }}</h1>
+      <h2 class="text-3xl text-f7f7f7">{{ board?.title ? board.title : 'Loading...' }}</h2>
       <div class="justify-end pr-12" v-if="userIsAdmin">
         <button id="auth-btn"
+            v-if="tasks != null"
             @click="showCreateModal = true"
             class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
             + Create task</button>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+    <div v-if="tasks == null">
+      <FullPageLoader />
+    </div>
+
+    <div v-if="tasks != null" class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
       <Column
         title="To do"
         status="to-do"
@@ -92,6 +97,7 @@ import TaskDeleteModal from '../components/TaskDeleteModal.vue';
 import BoardTaskEditModal from '../components/BoardTaskEditModal.vue';
 import TaskDetailsModal from '../components/TaskDetailsModal.vue';
 import BoardTaskCreateModal from '../components/BoardTaskCreateModal.vue';
+import FullPageLoader from '../components/FullPageLoader.vue';
 
 import { useAuthStore } from '../stores/auth';
 
@@ -116,12 +122,11 @@ interface Board {
 const auth = useAuthStore();
 const user = computed(() => auth.user);
 
-const isAdmin = computed(() => user.value.is_admin == true);
-const userIsAdmin = isAdmin.value;
+const userIsAdmin = computed(() => user.value.is_admin == true);
 
 const route = useRoute();
 const board = ref<Board | null>(null);
-const tasks = ref<Task[]>([]);
+const tasks = ref<Task[]>(null);
 
 const selectedTaskToEdit = ref(null)
 const showEditModal = ref(false)

@@ -11,7 +11,7 @@
     <!-- Slider -->
     <div
       ref="slider"
-      class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-7 no-scrollbar"
+      class="flex overflow-x-auto  overflow-hidden scroll-smooth snap-x snap-mandatory gap-7 no-scrollbar"
       style="scroll-behavior: smooth"
       @scroll="handleScroll"
     >

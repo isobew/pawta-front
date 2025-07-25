@@ -39,7 +39,7 @@ const filteredTasks = computed({
 </script>
 
 <template>
-  <div class="column-container p-4 rounded h-full w-70 overflow-y-auto">
+  <div class="column-container p-4 rounded h-[500px] w-70 overflow-y-auto">
     <h2 class="font-semibold mb-9 text-[#f7f7f7]">{{ title }}</h2>
     
     <draggable

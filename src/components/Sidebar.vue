@@ -28,6 +28,12 @@
             <span>All tasks</span>
           </RouterLink>
         </li>
+        <li class="flex items-center gap-3 cursor-pointer hover:text-[#525392]" v-if="isAdmin">
+          <RouterLink to="/manage-users" class="flex items-center gap-3 w-full">
+            <i class="bx bx-user text-lg"></i>
+            <span>Manage users</span>
+          </RouterLink>
+        </li>
       </ul>
     </div>
 
@@ -39,7 +45,10 @@
           alt="avatar"
           class="w-[30px] h-[30px] rounded-full object-cover"
         />
-        <span class="text-sm">{{ userName }}</span>
+        <div>
+          <span class="text-sm">{{ userName }}</span>
+          <div class="text-xs text-gray-400" v-if="isAdmin">ADMIN</div>
+        </div>
       </div>
 
       <!-- Logout -->
@@ -52,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import api from '../services/api'
@@ -60,6 +69,8 @@ import api from '../services/api'
 const router = useRouter()
 const auth = useAuthStore()
 const userName = ref('User')
+
+const isAdmin = computed(() => auth.user?.is_admin == true)
 
 const logout = async () => {
   await auth.logout()

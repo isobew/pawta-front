@@ -119,8 +119,7 @@ interface Task {
 const auth = useAuthStore();
 const user = computed(() => auth.user);
 
-const isAdmin = computed(() => user.value.is_admin == true);
-const userIsAdmin = isAdmin.value;
+const userIsAdmin = computed(() => user.value.is_admin == true);
 
 const tasks = ref([])
 const search = ref('')

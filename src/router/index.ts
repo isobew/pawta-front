@@ -10,6 +10,7 @@ import Dashboard from '../views/Dashboard.vue';
 import Board from '../views/Boards.vue';
 import Task from '../views/Tasks.vue';
 import BoardDetails from '../views/BoardDetails.vue';
+import ManageUsers from '../views/ManageUsers.vue';
 
 const routes = [
   {
@@ -36,6 +37,7 @@ const routes = [
       { path: '/boards', component: Board },
       { path: '/tasks', component: Task },
       { path: '/board/:id', component: BoardDetails },
+      { path: '/manage-users', component: ManageUsers, meta: { requiresAdmin: true } }
     ],
   },
 ];
@@ -52,6 +54,9 @@ router.beforeEach((to, from, next) => {
     return next('/login');
   }
   if (to.meta.guest && auth.user) {
+    return next('/dashboard');
+  }
+  if (to.meta.requiresAdmin && (!auth.user || !auth.user.is_admin)) {
     return next('/dashboard');
   }
   next();
