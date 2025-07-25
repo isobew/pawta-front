@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-[78vw] items-start justify-between">
     <div class="p-6 mb-7">
-      <h2 class="text-3xl text-f7f7f7">Welcome, {{ userName }}</h2>
+      <h2 class="text-3xl text-f7f7f7">{{ userName ? 'Welcome, ' + userName : 'Loading...' }}</h2>
       <p class="text-md text-f7f7f7 mt-2" style="font-weight: 300;">Manage your tasks</p>
     </div>
     <SearchInput v-model="search" placeholder="Search..." />
@@ -73,7 +73,7 @@ const search = ref('')
 const isSearching = ref(false)
 const isLoading = ref(false)
 const searchResults = ref([])
-const userName = ref('User')
+const userName = ref('')
 
 const selectedTask = ref(null)
 const showModal = ref(false)

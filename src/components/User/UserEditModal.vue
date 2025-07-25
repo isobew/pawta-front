@@ -4,7 +4,12 @@
     class="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
     @click.self="close"
   >
-    <div class="bg-white rounded-lg p-6 w-[500px] max-h-[90vh] overflow-y-auto">
+    <div v-if="currentUserId == null">
+      <FullPageLoader />
+    </div>
+    <div class="bg-white rounded-lg p-6 w-[500px] max-h-[90vh] overflow-y-auto"
+    v-if="currentUserId !== null"
+    >
       <h2 class="text-2xl font-semibold mb-4 text-[#525392]">Edit User</h2>
 
       <input
@@ -28,6 +33,7 @@
       </p>
 
       <select
+        v-if="!isOwnAccount"
         v-model="is_admin"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
         :class="{ 'border-red-500': is_adminError }"
@@ -63,6 +69,7 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits, watch, onMounted, computed } from "vue";
 import api from "../../services/api";
+import FullPageLoader from "../../components/FullPageLoader.vue";
 
 const props = defineProps<{
   visible: boolean;
@@ -82,6 +89,8 @@ const is_admin = ref(0);
 
 const isSaving = ref(false);
 const users = ref<{ id: number; name: string }[]>([]);
+const currentUserId = ref<number | null>(null);
+const isOwnAccount = computed(() => props.user.id === currentUserId.value);
 
 const nameError = ref(false);
 const emailError = ref(false);
@@ -143,10 +152,13 @@ const save = async () => {
 
 onMounted(async () => {
   try {
-    const [usersRes] = await Promise.all([
+    const [usersRes, currentUserRes] = await Promise.all([
       api.get("/api/users-list"),
+      api.get("/api/user"),
     ]);
+
     users.value = usersRes.data;
+    currentUserId.value = currentUserRes.data.id;
   } catch (err) {
     console.error("Error:", err);
   }
