@@ -6,11 +6,11 @@
   >
     <div class="bg-white rounded-lg p-6 w-[500px] max-h-[90vh] overflow-y-auto">
       <h2 class="text-2xl font-semibold mb-4 text-[#525392]">
-        Edit Task
+        Create Task
       </h2>
 
       <input
-        v-model="editedTitle"
+        v-model="title"
         type="text"
         placeholder="Task title"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
@@ -19,16 +19,16 @@
       <p v-if="titleError" class="text-red-500 text-sm mb-4">Title is required</p>
 
       <textarea
-        v-model="editedDescription"
+        v-model="description"
         placeholder="Description"
         rows="4"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
         :class="{ 'border-red-500': descriptionError }"
-      required ></textarea>
+      ></textarea>
       <p v-if="descriptionError" class="text-red-500 text-sm mb-4">Description is required</p>
 
       <input
-        v-model="editedDueDate"
+        v-model="dueDate"
         type="date"
         :min="today"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
@@ -37,7 +37,7 @@
       <p v-if="dueDateError" class="text-red-500 text-sm mb-4">Due date is required and need to be valid</p>
 
       <select
-        v-model="editedStatus"
+        v-model="status"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
       >
         <option value="to-do">To Do</option>
@@ -46,7 +46,7 @@
       </select>
 
       <select
-        v-model="editedBoardId"
+        v-model="boardId"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-4"
         :class="{ 'border-red-500': boardError }"
       >
@@ -58,7 +58,7 @@
       <p v-if="boardError" class="text-red-500 text-sm mb-4">Board is required</p>
 
       <select
-        v-model="editedAssigneeId"
+        v-model="assigneeId"
         class="w-full border border-gray-300 rounded px-3 py-2 text-[#353535] focus:outline-none focus:ring-2 focus:ring-[#525392] mb-6"
         :class="{ 'border-red-500': assigneeError }"
       >
@@ -72,10 +72,10 @@
       <div class="flex gap-4">
         <button
           class="flex-1 bg-[#525392] text-white py-2 rounded hover:opacity-90"
-          @click="save"
+          @click="create"
           :disabled="isSaving"
         >
-          {{ isSaving ? 'Saving...' : 'Save' }}
+          {{ isSaving ? 'Creating...' : 'Create' }}
         </button>
 
         <button
@@ -91,65 +91,31 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, watch, onMounted, computed } from 'vue'
-import api from '../services/api'
+import { ref, defineProps, defineEmits, onMounted, computed } from 'vue'
+import api from '../../services/api'
 
-const props = defineProps<{
-  visible: boolean
-  task: {
-    id: number
-    title: string
-    description: string
-    due_date: string
-    status: string
-    board_id: number
-    assignee_id: number
-    board_name: string
-    due_in: number
-  }
-}>()
+const props = defineProps<{ visible: boolean; creatorId: number }>()
+const emit = defineEmits(['close', 'created'])
 
-const emit = defineEmits(['close', 'updated'])
-
-const editedTitle = ref('')
-const editedDescription = ref('')
-const editedDueDate = ref('')
-const editedStatus = ref('to-do')
-const editedBoardId = ref<number | ''>('')
-const editedAssigneeId = ref<number | ''>('')
-
+const title = ref('')
+const description = ref('')
+const dueDate = ref('')
+const status = ref('to-do')
+const boardId = ref('')
+const assigneeId = ref('')
 const isSaving = ref(false)
+
 const boards = ref<{ id: number; title: string }[]>([])
 const users = ref<{ id: number; name: string }[]>([])
 
 const today = new Date().toISOString().split('T')[0]
 
+// Validation errors
 const titleError = ref(false)
 const descriptionError = ref(false)
 const dueDateError = ref(false)
 const boardError = ref(false)
 const assigneeError = ref(false)
-
-watch(
-  () => props.task,
-  (newTask) => {
-    if (newTask) {
-      editedTitle.value = newTask.title || ''
-      editedDescription.value = newTask.description || ''
-      editedDueDate.value = newTask.due_date || ''
-      editedStatus.value = newTask.status || 'to-do'
-      editedBoardId.value = newTask.board_id || ''
-      editedAssigneeId.value = newTask.assignee_id || ''
-      // reset errors
-      titleError.value = false
-      descriptionError.value = false
-      dueDateError.value = false
-      boardError.value = false
-      assigneeError.value = false
-    }
-  },
-  { immediate: true }
-)
 
 const close = () => {
   if (!isSaving.value) emit('close')
@@ -157,45 +123,60 @@ const close = () => {
 
 const isValidForm = computed(() => {
   return (
-    editedTitle.value.trim() !== '' &&
-    editedDescription.value.trim() !== '' &&
-    editedDueDate.value !== '' && 
-    new Date(editedDueDate.value) > new Date(today) &&
-    editedBoardId.value !== '' &&
-    editedAssigneeId.value !== ''
+    title.value.trim() !== '' &&
+    description.value.trim() !== '' &&
+    dueDate.value !== '' &&
+    new Date(dueDate.value) > new Date(today) &&
+    boardId.value !== '' &&
+    assigneeId.value !== ''
   )
 })
 
-const save = async () => {
-  titleError.value = editedTitle.value.trim() === ''
-  descriptionError.value = editedDescription.value.trim() === ''
-  dueDateError.value = editedDueDate.value === '' || new Date(editedDueDate.value) < new Date(today)
-  boardError.value = editedBoardId.value === ''
-  assigneeError.value = editedAssigneeId.value === ''
+const create = async () => {
+  titleError.value = title.value.trim() === ''
+  descriptionError.value = description.value.trim() === ''
+  dueDateError.value = dueDate.value === '' || new Date(dueDate.value) < new Date(today)
+  boardError.value = boardId.value === ''
+  assigneeError.value = assigneeId.value === ''
 
-  console.log(isValidForm)
   if (!isValidForm.value) return
 
   isSaving.value = true
   try {
-    await api.put(`/api/update-task/${props.task.id}`, {
-      title: editedTitle.value.trim(),
-      description: editedDescription.value.trim(),
-      due_date: editedDueDate.value,
-      status: editedStatus.value,
-      board_id: editedBoardId.value,
-      assignee_id: editedAssigneeId.value,
+    const item_task = await api.post('/api/create-task', {
+      title: title.value.trim(),
+      description: description.value.trim(),
+      due_date: dueDate.value,
+      status: status.value,
+      board_id: boardId.value,
+      assignee_id: assigneeId.value,
+      creator_id: props.creatorId,
     })
 
-    const response = await api.get(`/api/tasks/${props.task.id}`)
+    const response = await api.get(`/api/tasks/${item_task.data.id}`)
 
-    emit('updated', response.data)
+    emit('created', response.data)
+    resetForm()
     close()
   } catch (err) {
-    console.error('Error updating task:', err)
+    console.error('Error creating task:', err)
   } finally {
     isSaving.value = false
   }
+}
+
+const resetForm = () => {
+  title.value = ''
+  description.value = ''
+  dueDate.value = ''
+  status.value = 'to-do'
+  boardId.value = ''
+  assigneeId.value = ''
+  titleError.value = false
+  descriptionError.value = false
+  dueDateError.value = false
+  boardError.value = false
+  assigneeError.value = false
 }
 
 onMounted(async () => {
@@ -207,7 +188,7 @@ onMounted(async () => {
     boards.value = boardsRes.data.data
     users.value = usersRes.data
   } catch (err) {
-    console.error('Erro ao carregar boards ou usuários:', err)
+    console.error('Error loading data:', err)
   }
 })
 </script>

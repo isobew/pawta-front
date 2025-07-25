@@ -24,11 +24,11 @@
     </div>
 
     <img
-      src="../assets/purplecat.svg"
+      src="../../assets/purplecat.svg"
       alt="avatar"
       class="w-[100px] h-[100px] object-cover"
     />
-    {{ item.title }}
+    <p class="truncate">{{ item.title }}</p>
   </div>
 </template>
 

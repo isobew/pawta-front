@@ -61,17 +61,17 @@
           @click="fetchUsers(currentPage - 1)"
           class="px-4 py-2 rounded bg-[#e4e4e4] hover:bg-[#dcdcdc] disabled:opacity-50"
         >
-          Anterior
+          Prev
         </button>
 
-        <span class="text-[#f7f7f7]">Página {{ currentPage }} de {{ lastPage }}</span>
+        <span class="text-[#f7f7f7]">Page {{ currentPage }} de {{ lastPage }}</span>
 
         <button
           :disabled="currentPage === lastPage"
           @click="fetchUsers(currentPage + 1)"
           class="px-4 py-2 rounded bg-[#e4e4e4] hover:bg-[#dcdcdc] disabled:opacity-50"
         >
-          Próxima
+          Next
         </button>
       </div>
     </section>

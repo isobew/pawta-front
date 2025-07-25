@@ -11,6 +11,7 @@ import Board from '../views/Boards.vue';
 import Task from '../views/Tasks.vue';
 import BoardDetails from '../views/BoardDetails.vue';
 import ManageUsers from '../views/ManageUsers.vue';
+import Profile from '../views/Profile.vue';
 
 const routes = [
   {
@@ -37,7 +38,8 @@ const routes = [
       { path: '/boards', component: Board },
       { path: '/tasks', component: Task },
       { path: '/board/:id', component: BoardDetails },
-      { path: '/manage-users', component: ManageUsers, meta: { requiresAdmin: true } }
+      { path: '/manage-users', component: ManageUsers, meta: { requiresAdmin: true } },
+      { path: '/profile', component: Profile }
     ],
   },
 ];

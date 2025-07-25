@@ -38,7 +38,7 @@
     </div>
 
     <div>
-      <!-- Perfil -->
+      <!-- Profile -->
       <div class="flex items-center gap-3 mb-6">
         <img
           src="../assets/image.png"
@@ -46,7 +46,9 @@
           class="w-[30px] h-[30px] rounded-full object-cover"
         />
         <div>
-          <span class="text-sm">{{ userName }}</span>
+          <router-link :to="`/profile`" class="text-sm cursor-pointer hover:text-[#525392]">
+            {{ userName }}
+          </router-link>
           <div class="text-xs text-gray-400" v-if="isAdmin">ADMIN</div>
         </div>
       </div>

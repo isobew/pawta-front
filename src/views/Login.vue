@@ -16,7 +16,7 @@
             await auth.login({ email: email.value, password: password.value });
             router.push('/dashboard');
         } catch (error) {
-            const msg = error.response?.data?.message || 'Erro no login. Tente novamente.';
+            const msg = error.response?.data?.message || 'Error.';
             $toast.error(msg);
             Cookies.remove('XSRF-TOKEN');
             Cookies.remove('pawta_session');
@@ -58,8 +58,8 @@
       LOGIN</button>
     </form>
     <p class="mt-5 pt-5 text-sm">
-      Ainda não tem conta?
-      <a href="/register" class="font-bold">Cadastre-se</a>
+      Don't have an account?
+      <a href="/register" class="font-bold">Register</a>
     </p>
   </div>
 </template>

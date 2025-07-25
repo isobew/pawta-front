@@ -160,7 +160,7 @@ onMounted(async () => {
     users.value = usersRes.data;
     currentUserId.value = currentUserRes.data.id;
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Error loading data:", err);
   }
 });
 </script>

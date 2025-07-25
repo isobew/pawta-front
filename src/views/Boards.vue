@@ -51,6 +51,29 @@
             :isAdmin="userIsAdmin"
           />
         </div>
+
+        <div
+          class="flex justify-between items-center mt-6 text-[#525392] w-[95%]"
+          v-if="lastPage > 1"
+        >
+          <button
+            :disabled="currentPage === 1"
+            @click="fetchBoards(currentPage - 1)"
+            class="px-4 py-2 rounded bg-[#e4e4e4] hover:bg-[#dcdcdc] disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          <span class="text-[#f7f7f7]">Page {{ currentPage }} de {{ lastPage }}</span>
+
+          <button
+            :disabled="currentPage === lastPage"
+            @click="fetchBoards(currentPage + 1)"
+            class="px-4 py-2 rounded bg-[#e4e4e4] hover:bg-[#dcdcdc] disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
       <div v-else class="text-center text-f7f7f7 mt-6">
         Not found.
@@ -85,12 +108,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import api from '../services/api'
-import BoardCard from '../components/BoardCard.vue'
+import BoardCard from '../components/Board/BoardCard.vue'
 import SearchInput from '../components/SearchInput.vue'
 import FullPageLoader from '../components/FullPageLoader.vue'
-import BoardEditModal from '../components/BoardEditModal.vue'
-import BoardDeleteModal from '../components/BoardDeleteModal.vue'
-import BoardCreateModal from '../components/BoardCreateModal.vue'
+import BoardEditModal from '../components/Board/BoardEditModal.vue'
+import BoardDeleteModal from '../components/Board/BoardDeleteModal.vue'
+import BoardCreateModal from '../components/Board/BoardCreateModal.vue'
 import { useAuthStore } from '../stores/auth'
 
 interface Board {
@@ -103,16 +126,19 @@ const user = computed(() => auth.user);
 
 const userIsAdmin = computed(() => user.value.is_admin == true);
 
-const boards = ref([])
+const boards = ref<Board[]>([])
+const currentPage = ref(1)
+const lastPage = ref(1)
+
 const search = ref('')
 const isSearching = ref(false)
 const isLoading = ref(false)
-const searchResults = ref([])
+const searchResults = ref<Board[]>([])
 
-const selectedBoardToEdit = ref(null)
+const selectedBoardToEdit = ref<Board | null>(null)
 const showEditModal = ref(false)
 
-const selectedBoardToDelete = ref(null)
+const selectedBoardToDelete = ref<Board | null>(null)
 const showDeleteModal = ref(false)
 
 const showCreateModal = ref(false)
@@ -167,16 +193,24 @@ const handleBoardCreated = (newBoard: Board) => {
   showCreateModal.value = false
 }
 
-onMounted(async () => {
+const fetchBoards = async (page = 1) => {
   isLoading.value = true
   try {
-    const boardsRes = await api.get('/api/boards')
-    boards.value = boardsRes.data.data
+    const response = await api.get('/api/boards', {
+      params: { page }
+    })
+    boards.value = response.data.data
+    currentPage.value = response.data.current_page
+    lastPage.value = response.data.last_page
   } catch (err) {
     console.error('Error loading boards data', err)
   } finally {
     isLoading.value = false
   }
+}
+
+onMounted(() => {
+  fetchBoards()
 })
 
 watch(search, async (value) => {

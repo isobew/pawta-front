@@ -1,12 +1,12 @@
 <template>
-  <div class="p-10 w-[80vw] min-h-screen">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-20 gap-5">
+  <div class="w-[80vw] min-h-screen">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-5 p-6 mb-2">
       <h2 class="text-3xl text-f7f7f7">{{ board?.title ? board.title : 'Loading...' }}</h2>
-      <div class="justify-end pr-12" v-if="userIsAdmin">
+      <div class="flex justify-end items-center pr-12" v-if="userIsAdmin">
         <button id="auth-btn"
             v-if="tasks != null"
             @click="showCreateModal = true"
-            class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
+            class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer">
             + Create task</button>
       </div>
     </div>
@@ -15,7 +15,7 @@
       <FullPageLoader />
     </div>
 
-    <div v-if="tasks != null" class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+    <div v-if="tasks != null" class="ml-6 w-[93%] flex justify-between">
       <Column
         title="To do"
         status="to-do"
@@ -93,10 +93,10 @@ import { useRoute } from 'vue-router';
 import api from '../services/api';
 
 import Column from '../components/Column.vue';
-import TaskDeleteModal from '../components/TaskDeleteModal.vue';
-import BoardTaskEditModal from '../components/BoardTaskEditModal.vue';
-import TaskDetailsModal from '../components/TaskDetailsModal.vue';
-import BoardTaskCreateModal from '../components/BoardTaskCreateModal.vue';
+import TaskDeleteModal from '../components/Task/TaskDeleteModal.vue';
+import BoardTaskEditModal from '../components/BoardTask/BoardTaskEditModal.vue';
+import TaskDetailsModal from '../components/Task/TaskDetailsModal.vue';
+import BoardTaskCreateModal from '../components/BoardTask/BoardTaskCreateModal.vue';
 import FullPageLoader from '../components/FullPageLoader.vue';
 
 import { useAuthStore } from '../stores/auth';
@@ -139,7 +139,7 @@ const showCreateModal = ref(false)
 const showModal = ref(false)
 const selectedTask = ref(null)
 
-const openModal = (task: any) => {
+const openModal = (task: Task) => {
   selectedTask.value = task
   showModal.value = true
 }
@@ -148,7 +148,7 @@ const closeModal = () => {
   selectedTask.value = null
 }
 
-const openEditModal = (task: any) => {
+const openEditModal = (task: Task) => {
   selectedTaskToEdit.value = task
   showEditModal.value = true
 }
@@ -158,7 +158,7 @@ const closeEditModal = () => {
   selectedTaskToEdit.value = null
 }
 
-const openDeleteModal = (task: any) => {
+const openDeleteModal = (task: Task) => {
   selectedTaskToDelete.value = task
   showDeleteModal.value = true
 }
@@ -175,7 +175,7 @@ const fetchBoardWithTasks = async () => {
     board.value = res.data.board;
     tasks.value = res.data.tasks || [];
   } catch (error) {
-    console.error('Erro ao buscar o quadro com tarefas:', error);
+    console.error('Error loading data:', error);
   }
 };
 
@@ -184,7 +184,7 @@ const updateTaskStatus = async (id: string, status: string) => {
     await api.put(`/api/update-task/${id}`, { status });
     await fetchBoardWithTasks();
   } catch (error: any) {
-    console.error('Erro ao mover tarefa', error);
+    console.error('Error updating task', error);
   }
 };
 
@@ -199,7 +199,7 @@ const confirmAndDelete = async () => {
       await fetchBoardWithTasks();
       closeDeleteModal();
     } catch (error) {
-      console.error('Erro ao deletar tarefa');
+      console.error('Erro deleting task', error);
     }
   }
 };

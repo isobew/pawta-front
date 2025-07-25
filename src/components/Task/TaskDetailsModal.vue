@@ -42,7 +42,19 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue'
 
-defineProps<{ visible: boolean; task: any }>()
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  creator_id: string;
+  createdAt: string;
+  due_date: string;
+  assignee_id?: string;
+  due_in: number;
+}
+
+defineProps<{ visible: boolean; task: Task }>()
 const emit = defineEmits(['close'])
 
 const close = () => emit('close')
