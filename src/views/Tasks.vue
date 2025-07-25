@@ -34,12 +34,20 @@
     </div>
 
     <div v-else>
-      <div class="flex w-[78vw] justify-end pr-12" v-if="userIsAdmin">
+      <div class="flex w-[78vw] justify-between pr-12">
         <button id="auth-btn"
+            v-if="userIsAdmin"
             @click="showCreateModal = true"
             class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
             + Create task</button>
+        <button id="auth-btn"
+            @click="exportTasks"
+            class="min-h-[2.5em] min-w-[156px] text-dark font-bold text-sm rounded-full cursor-pointer mb-8"
+        >
+          > Export CSV
+        </button>
       </div>
+
       <div v-if="tasks.length">
         <div class="flex flex-wrap gap-4">
           <TaskCard
@@ -105,6 +113,7 @@
     @close="showCreateModal = false"
     @created="handleTaskCreated"
     :creator-id="user.id"
+    v-if="userIsAdmin"
   />
 
   <TaskDetailsModal
@@ -238,6 +247,24 @@ const fetchTasks = async (page = 1) => {
     isLoading.value = false
   }
 }
+
+const exportTasks = async () => {
+  try {
+    const response = await api.get('/api/tasks/export', {
+      responseType: 'blob',
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'tasks.csv');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error('Error exporting tasks:', error);
+  }
+};
 
 onMounted(async () => {
   fetchTasks()
