@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-[30%] max-w-md mr-4 mt-9">
+  <div class="relative md:w-[30%] w-full max-w-md md:ml-0 ml-6 mr-4 md:mt-9 md:mb-0 mb-5">
     <input
       v-model="searchQuery"
       type="text"

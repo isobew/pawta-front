@@ -1,7 +1,7 @@
 <template>
-  <div class="flex w-[78vw] items-start justify-between">
+  <div class="flex w-[78vw] md:flex-row flex-col items-start justify-between">
     <div class="p-6 mb-2">
-      <h2 class="text-3xl text-f7f7f7">Boards</h2>
+      <h2 class="md:text-3xl text-md text-f7f7f7">Boards</h2>
       <p class="text-md text-f7f7f7 mt-2" style="font-weight: 300;">Manage your boards</p>
     </div>
     <SearchInput v-model="search" placeholder="Search..." />
@@ -33,7 +33,7 @@
     </div>
 
     <div v-else>
-      <div class="flex w-[78vw] justify-end pr-12" v-if="userIsAdmin">
+      <div class="flex w-[78vw] md:justify-end pr-12" v-if="userIsAdmin">
         <button id="auth-btn"
             @click="showCreateModal = true"
             class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
@@ -53,7 +53,7 @@
         </div>
 
         <div
-          class="flex justify-between items-center mt-6 text-[#525392] w-[95%]"
+          class="flex md:flex-row flex-col justify-between items-center mt-6 text-[#525392] w-[95%]"
           v-if="lastPage > 1"
         >
           <button

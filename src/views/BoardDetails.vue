@@ -2,7 +2,7 @@
   <div class="w-[80vw] min-h-screen">
     <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-5 p-6 mb-2">
       <h2 class="text-3xl text-f7f7f7">{{ board?.title ? board.title : 'Loading...' }}</h2>
-      <div class="flex justify-end items-center pr-12" v-if="userIsAdmin">
+      <div class="flex justify-end items-center md:pr-12" v-if="userIsAdmin">
         <button id="auth-btn"
             v-if="tasks != null"
             @click="showCreateModal = true"
@@ -15,7 +15,7 @@
       <FullPageLoader />
     </div>
 
-    <div v-if="tasks != null" class="ml-6 w-[93%] flex justify-between">
+    <div v-if="tasks != null" class="ml-6 w-[93%] flex md:flex-row flex-col md:gap-0 gap-3 justify-between">
       <Column
         title="To do"
         status="to-do"

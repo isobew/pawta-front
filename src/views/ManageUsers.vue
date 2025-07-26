@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="flex w-[78vw] items-start justify-between">
+    <div class="flex w-[78vw] md:flex-row flex-col items-start justify-between">
         <div class="p-6 mb-2">
-            <h2 class="text-3xl text-f7f7f7">Users</h2>
+            <h2 class="md:text-3xl text-md text-f7f7f7">Users</h2>
             <p class="text-md text-f7f7f7 mt-2" style="font-weight: 300;">Manage users</p>
         </div>
         <SearchInput v-model="search" placeholder="Search..." class='mt-0' />

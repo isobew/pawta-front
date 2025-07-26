@@ -1,7 +1,7 @@
 <template>
-  <div class="flex w-[78vw] items-start justify-between">
+  <div class="flex w-[78vw] md:flex-row flex-col items-start justify-between">
     <div class="p-6 mb-2">
-      <h2 class="text-3xl text-f7f7f7">Tasks</h2>
+      <h2 class="md:text-3xl text-md text-f7f7f7">Tasks</h2>
       <p class="text-md text-f7f7f7 mt-2" style="font-weight: 300;">Manage your tasks</p>
     </div>
     <SearchInput v-model="search" placeholder="Search..." />
@@ -34,7 +34,7 @@
     </div>
 
     <div v-else>
-      <div class="flex w-[78vw] justify-between pr-12">
+      <div class="flex w-[78vw] md:flex-row flex-col justify-between pr-12">
         <button id="auth-btn"
             @click="exportTasks"
             class="min-h-[2.5em] min-w-[156px] text-dark font-bold text-sm rounded-full cursor-pointer mb-8"
