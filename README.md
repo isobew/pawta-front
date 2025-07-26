@@ -8,7 +8,7 @@ Sistema de gerenciamento de tarefas com quadros, colunas e cards interativos, de
 
 Este projeto faz parte do sistema **Pawta**, que permite organizar tarefas em colunas por status, com suporte a **drag-and-drop**, autenticação via token e painel administrativo para gerenciamento de usuários, quadros e tarefas.
 
-![Preview do Layout](https://www.figma.com/design/efdyorXhdBxhgaQwak6dRW/Pawta)
+![Preview do Layout](https://github.com/user-attachments/assets/88b0744c-f961-4333-a8f3-5bcbd1888faf)
 
 ## Tecnologias
 
