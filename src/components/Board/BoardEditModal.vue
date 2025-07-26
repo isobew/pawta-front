@@ -40,6 +40,9 @@
 <script lang="ts" setup>
 import { ref, watch, defineProps, defineEmits } from 'vue'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const props = defineProps<{ visible: boolean; board: { id: number; title: string } }>()
 const emit = defineEmits(['close', 'updated'])
@@ -71,7 +74,11 @@ const save = async () => {
     emit('updated', response.data)
 
     close()
+    const msg = 'Board updated successfully!';
+    $toast.success(msg);
   } catch (err) {
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error updating board:', err)
   } finally {
     isSaving.value = false

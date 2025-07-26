@@ -51,7 +51,7 @@
         :class="{ 'border-red-500': boardError }"
       >
         <option disabled value="">Select Board</option>
-        <option v-for="board in boards" :key="board.id" :value="board.id">
+        <option v-for="board in boardsList" :key="board.id" :value="board.id">
           {{ board.title }}
         </option>
       </select>
@@ -93,6 +93,9 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits, watch, onMounted, computed } from 'vue'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const props = defineProps<{
   visible: boolean
@@ -120,6 +123,7 @@ const editedAssigneeId = ref<number | ''>('')
 
 const isSaving = ref(false)
 const boards = ref<{ id: number; title: string }[]>([])
+const boardsList = ref<{ id: number; title: string }[]>([])
 const users = ref<{ id: number; name: string }[]>([])
 
 const today = new Date().toISOString().split('T')[0]
@@ -191,7 +195,11 @@ const save = async () => {
 
     emit('updated', response.data)
     close()
+    const msg = 'Task updated successfully!';
+    $toast.success(msg);
   } catch (err) {
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error updating task:', err)
   } finally {
     isSaving.value = false
@@ -200,11 +208,13 @@ const save = async () => {
 
 onMounted(async () => {
   try {
-    const [boardsRes, usersRes] = await Promise.all([
+    const [boardsRes, boardsListRes, usersRes] = await Promise.all([
       api.get('/api/boards'),
-      api.get('/api/users'),
+      api.get('/api/boards-list'),
+      api.get('/api/users')
     ])
     boards.value = boardsRes.data.data
+    boardsList.value = boardsListRes.data
     users.value = usersRes.data
   } catch (err) {
     console.error('Error loading data:', err)

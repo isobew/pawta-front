@@ -70,6 +70,9 @@
 import { ref, defineProps, defineEmits, watch, onMounted, computed } from "vue";
 import api from "../../services/api";
 import FullPageLoader from "../../components/FullPageLoader.vue";
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const props = defineProps<{
   visible: boolean;
@@ -143,8 +146,12 @@ const save = async () => {
 
     emit("updated", response.data);
     close();
+    const msg = 'User updated successfully!';
+    $toast.success(msg);
   } catch (err) {
     console.error("Error updating task:", err);
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
   } finally {
     isSaving.value = false;
   }

@@ -40,6 +40,9 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const props = defineProps<{ visible: boolean }>()
 const emit = defineEmits(['close', 'created'])
@@ -63,7 +66,11 @@ const create = async () => {
     emit('created', response.data)
     title.value = ''
     close()
+    const msg = 'Board created successfully!';
+    $toast.success(msg);
   } catch (err) {
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error creating board:', err)
   } finally {
     isSaving.value = false

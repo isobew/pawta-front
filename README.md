@@ -48,6 +48,16 @@ npm run dev
 
 Certifique-se de que o backend está rodando também.
 
+Você pode acessar os usuários com os seguintes dados
+
+Usuário comum:
+- user@user.com
+- senha: password
+
+Usuário admin:
+- admin@admin.com
+- senha: password
+
 ---
 
 ## Páginas e funcionalidades implementadas até agora

@@ -37,6 +37,9 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const props = defineProps<{ visible: boolean; user: { id: number; name: string } }>()
 const emit = defineEmits(['close', 'deleted'])
@@ -53,8 +56,12 @@ const confirmDelete = async () => {
     await api.delete(`api/delete-user/${props.user.id}`)
     emit('deleted', props.user.id)
     close()
+    const msg = 'User deleted successfully!';
+    $toast.success(msg);
   } catch (err) {
     console.error('Error deleting user:', err)
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
   } finally {
     isDeleting.value = false
   }

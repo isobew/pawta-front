@@ -37,6 +37,9 @@
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const props = defineProps<{ visible: boolean; board: { id: number; title: string } }>()
 const emit = defineEmits(['close', 'deleted'])
@@ -53,7 +56,11 @@ const confirmDelete = async () => {
     await api.delete(`api/delete-board/${props.board.id}`)
     emit('deleted', props.board.id)
     close()
+    const msg = 'Board deleted successfully!';
+    $toast.success(msg);
   } catch (err) {
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error deleting board:', err)
   } finally {
     isDeleting.value = false

@@ -82,6 +82,9 @@
 import { ref, defineProps, defineEmits, watch, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const route = useRoute()
 
@@ -178,7 +181,11 @@ const save = async () => {
 
     emit('updated', response.data)
     close()
+    const msg = 'Task updated';
+    $toast.success(msg);
   } catch (err) {
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error updating task:', err)
   } finally {
     isSaving.value = false

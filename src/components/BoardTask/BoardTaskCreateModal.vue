@@ -82,6 +82,9 @@
 import { ref, defineProps, defineEmits, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../../services/api'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 const route = useRoute()
 
@@ -148,6 +151,8 @@ const create = async () => {
     resetForm()
     close()
   } catch (err) {
+    const msg = err.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error creating task:', err)
   } finally {
     isSaving.value = false

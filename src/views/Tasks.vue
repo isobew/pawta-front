@@ -36,16 +36,16 @@
     <div v-else>
       <div class="flex w-[78vw] justify-between pr-12">
         <button id="auth-btn"
-            v-if="userIsAdmin"
-            @click="showCreateModal = true"
-            class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
-            + Create task</button>
-        <button id="auth-btn"
             @click="exportTasks"
             class="min-h-[2.5em] min-w-[156px] text-dark font-bold text-sm rounded-full cursor-pointer mb-8"
         >
           > Export CSV
         </button>
+        <button id="auth-btn"
+            v-if="userIsAdmin"
+            @click="showCreateModal = true"
+            class="min-h-[2.5em] min-w-[50px] text-dark font-bold text-lg rounded-full cursor-pointer mb-8">
+            + Create task</button>
       </div>
 
       <div v-if="tasks.length">
@@ -135,6 +135,9 @@ import TaskEditModal from '../components/Task/TaskEditModal.vue'
 import TaskDeleteModal from '../components/Task/TaskDeleteModal.vue'
 import TaskCreateModal from '../components/Task/TaskCreateModal.vue'
 import { useAuthStore } from '../stores/auth'
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 interface Task {
   id: string;
@@ -261,7 +264,11 @@ const exportTasks = async () => {
     document.body.appendChild(link);
     link.click();
     link.remove();
+    const msg = 'Your file downloaded successfully!';
+    $toast.success(msg);
   } catch (error) {
+    const msg = error.response?.data?.message || 'Error.';
+    $toast.error(msg);
     console.error('Error exporting tasks:', error);
   }
 };

@@ -15,6 +15,8 @@
         try {
             await auth.login({ email: email.value, password: password.value });
             router.push('/dashboard');
+            const msg = 'Success!';
+            $toast.success(msg);
         } catch (error) {
             const msg = error.response?.data?.message || 'Error.';
             $toast.error(msg);
